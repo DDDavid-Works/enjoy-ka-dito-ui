@@ -1,0 +1,33 @@
+.footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 56px;
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.tagline {
+  max-width: 480px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.contact {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+@media (max-width: 900px) {
+  .footer {
+    padding: 40px 24px;
+  }
+}

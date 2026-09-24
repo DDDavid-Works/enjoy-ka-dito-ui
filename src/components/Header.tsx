@@ -1,0 +1,36 @@
+import { NavLink } from 'react-router-dom'
+import styles from './Header.module.css'
+
+const NAV_LINKS = [
+  { label: 'Home', to: '/' },
+  { label: 'Tour Packages', to: '/tour-packages' },
+  { label: 'Travel Services', to: '/travel-services' },
+  { label: 'About Us', to: '/about-us' },
+  { label: 'Contact Us', to: '/contact-us' },
+]
+
+export default function Header() {
+  return (
+    <header className={styles.header}>
+      <NavLink to="/" className={styles.logo}>
+        Enjoy Ka Dito
+      </NavLink>
+
+      <nav className={styles.nav}>
+        {NAV_LINKS.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) => (isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink)}
+          >
+            {link.label}
+          </NavLink>
+        ))}
+      </nav>
+
+      <NavLink to="/contact-us" className={styles.cta}>
+        Request a Quote
+      </NavLink>
+    </header>
+  )
+}
