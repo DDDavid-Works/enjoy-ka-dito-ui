@@ -14,6 +14,7 @@ export default function Header() {
     <header className={styles.header}>
       <NavLink to="/" className={styles.logo}>
         <img src="/images/logo.png" alt="Enjoy Ka Dito" />
+        <span className={styles.logoCompany}>by: MCP Greenery Travel and Tours</span>
       </NavLink>
 
       <nav className={styles.nav}>

@@ -25,7 +25,7 @@ export default function Home() {
       >
         <div className={styles.heroContent}>
           <p className={styles.badge}>CURATED JOURNEYS · PHILIPPINES &amp; BEYOND</p>
-          <h1 className={styles.heroTitle}>Make memories. Explore more.</h1>
+          <h1 className={styles.heroTitle}>Helping You Make More Memories Through Travel</h1>
           <p className={styles.heroSubtext}>
             From island weekends to international escapes, Enjoy Ka Dito makes every part of your trip feel
             effortless.
