@@ -1,9 +1,10 @@
 :root {
   --color-bg: #f7f6f1;
-  --color-primary: #173f45;
-  --color-primary-light: #295b62;
+  --color-primary: #1e3a72;
+  --color-primary-light: #2c56a0;
   --color-text: #1f2933;
-  --color-accent: #f4c56b;
+  --color-accent: #f0a428;
+  --color-highlight: #d64545;
   --color-white: #ffffff;
 
   --font-display: 'Clash Grotesk', 'General Sans', sans-serif;

@@ -53,7 +53,7 @@ export default function Home() {
               style={
                 item.image
                   ? { backgroundImage: `url(${item.image})` }
-                  : { backgroundImage: 'linear-gradient(135deg, #173f45 0%, #295b62 100%)' }
+                  : { backgroundImage: 'linear-gradient(135deg, #1e3a72 0%, #2c56a0 100%)' }
               }
             >
               <p className={styles.cardTitle}>{item.title}</p>

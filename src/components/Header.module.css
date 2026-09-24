@@ -11,11 +11,14 @@
 }
 
 .logo {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--color-primary);
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logo img {
+  height: 64px;
+  width: auto;
 }
 
 .nav {
@@ -59,7 +62,11 @@
 @media (max-width: 900px) {
   .header {
     flex-wrap: wrap;
-    padding: 18px 24px;
+    padding: 14px 24px;
+  }
+
+  .logo img {
+    height: 44px;
   }
 
   .nav {

@@ -13,7 +13,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <NavLink to="/" className={styles.logo}>
-        Enjoy Ka Dito
+        <img src="/images/logo.png" alt="Enjoy Ka Dito" />
       </NavLink>
 
       <nav className={styles.nav}>

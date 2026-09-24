@@ -11,7 +11,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(23, 63, 69, 0.15) 0%, rgba(23, 63, 69, 0.75) 100%);
+  background: linear-gradient(180deg, rgba(30, 58, 114, 0.15) 0%, rgba(30, 58, 114, 0.75) 100%);
 }
 
 .heroContent {
