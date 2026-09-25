@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import styles from './Header.module.css'
 
 const NAV_LINKS = [
@@ -10,6 +11,13 @@ const NAV_LINKS = [
 ]
 
 export default function Header() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
   return (
     <header className={styles.header}>
       <NavLink to="/" className={styles.logo}>
@@ -17,7 +25,7 @@ export default function Header() {
         <span className={styles.logoCompany}>by: MCP Greenery Travel and Tours</span>
       </NavLink>
 
-      <nav className={styles.nav}>
+      <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}>
         {NAV_LINKS.map((link) => (
           <NavLink
             key={link.to}
@@ -27,11 +35,24 @@ export default function Header() {
             {link.label}
           </NavLink>
         ))}
+        <NavLink to="/request-a-quote" className={styles.ctaMobile}>
+          Request a Quote
+        </NavLink>
       </nav>
 
       <NavLink to="/request-a-quote" className={styles.cta}>
         Request a Quote
       </NavLink>
+
+      <button
+        type="button"
+        className={styles.menuToggle}
+        onClick={() => setMenuOpen((prev) => !prev)}
+        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={menuOpen}
+      >
+        <span className={`${styles.menuIcon} ${menuOpen ? styles.menuIconOpen : ''}`} />
+      </button>
     </header>
   )
 }
