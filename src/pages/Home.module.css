@@ -76,6 +76,31 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
+.trustStrip {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 28px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  border-bottom: 1px solid rgba(30, 58, 114, 0.08);
+}
+
+.trustBadge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.trustIcon {
+  font-size: 20px;
+}
+
 .findYourWay {
   max-width: var(--container-width);
   margin: 0 auto;
@@ -172,6 +197,11 @@
   .heroTitle {
     font-size: 40px;
     letter-spacing: -1px;
+  }
+
+  .trustStrip {
+    padding: 20px 24px;
+    gap: 20px;
   }
 
   .findYourWay {

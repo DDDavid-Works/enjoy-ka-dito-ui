@@ -1,6 +1,12 @@
 import { Link, NavLink } from 'react-router-dom'
 import styles from './Home.module.css'
 
+const TRUST_BADGES = [
+  { icon: '🛡️', label: 'DOT Accredited' },
+  { icon: '✈️', label: 'PAL Accredited Partner' },
+  { icon: '🕐', label: '24/7 Support' },
+]
+
 const GATEWAYS = [
   {
     title: 'Corporate Team Building',
@@ -48,6 +54,15 @@ export default function Home() {
             </NavLink>
           </div>
         </div>
+      </section>
+
+      <section className={styles.trustStrip}>
+        {TRUST_BADGES.map((badge) => (
+          <div key={badge.label} className={styles.trustBadge}>
+            <span className={styles.trustIcon}>{badge.icon}</span>
+            <span>{badge.label}</span>
+          </div>
+        ))}
       </section>
 
       <section className={styles.findYourWay}>
