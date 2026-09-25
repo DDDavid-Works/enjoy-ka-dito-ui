@@ -15,6 +15,8 @@ import AdminDashboard from './pages/admin/Dashboard'
 import PackagesList from './pages/admin/packages/PackagesList'
 import PackageForm from './pages/admin/packages/PackageForm'
 import InquiriesList from './pages/admin/inquiries/InquiriesList'
+import HotelsList from './pages/admin/hotels/HotelsList'
+import HotelForm from './pages/admin/hotels/HotelForm'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -70,6 +72,30 @@ export default function App() {
         element={
           <ProtectedRoute>
             <InquiriesList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/hotels"
+        element={
+          <ProtectedRoute>
+            <HotelsList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/hotels/new"
+        element={
+          <ProtectedRoute>
+            <HotelForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/hotels/:id/edit"
+        element={
+          <ProtectedRoute>
+            <HotelForm />
           </ProtectedRoute>
         }
       />

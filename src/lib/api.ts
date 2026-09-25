@@ -1,5 +1,6 @@
 import type { Package, PackageInput } from '../types/package'
 import type { Inquiry, InquiryInput } from '../types/inquiry'
+import type { Hotel, HotelInput } from '../types/hotel'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
 const STORAGE_KEY = 'ekd-admin-auth'
@@ -45,6 +46,15 @@ export const packagesApi = {
   update: (id: string, data: Partial<PackageInput>) =>
     request<Package>(`/packages/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   remove: (id: string) => request<void>(`/packages/${id}`, { method: 'DELETE' }),
+}
+
+export const hotelsApi = {
+  list: () => request<Hotel[]>('/hotels'),
+  get: (id: string) => request<Hotel>(`/hotels/${id}`),
+  create: (data: HotelInput) => request<Hotel>('/hotels', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: Partial<HotelInput>) =>
+    request<Hotel>(`/hotels/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  remove: (id: string) => request<void>(`/hotels/${id}`, { method: 'DELETE' }),
 }
 
 export const inquiriesApi = {
