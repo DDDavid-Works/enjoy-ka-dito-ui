@@ -1,18 +1,27 @@
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import styles from './Home.module.css'
 
-const TRAVEL_STYLES = [
+const GATEWAYS = [
   {
-    title: 'Local Tours',
-    image: '/images/local-tours.jpg',
-  },
-  {
-    title: 'International Tours',
-    image: '/images/international-tours.jpg',
-  },
-  {
-    title: 'Team Building & Corporate Trips',
+    title: 'Corporate Team Building',
+    copy: 'Complete logistics, official invoicing, custom domestic & Asian itineraries, and on-site coordinators for teams of all sizes.',
+    button: 'Explore Corporate Packages',
     image: null,
+    to: '/corporate-team-building',
+  },
+  {
+    title: 'Family & Senior Tours',
+    copy: 'Relaxed pacing, private transport, senior-friendly steps, and hassle-free, door-to-door managed itineraries.',
+    button: 'View Family Tour Packages',
+    image: null,
+    to: '/family-senior-tours',
+  },
+  {
+    title: 'Inbound Foreigner Packages',
+    copy: 'Experience the best of the Philippines with English-speaking guides, vetted hotels, and fully handled inter-island flights & transfers.',
+    button: 'Discover the Philippines',
+    image: '/images/local-tours.jpg',
+    to: '/philippines-inbound',
   },
 ]
 
@@ -43,12 +52,13 @@ export default function Home() {
 
       <section className={styles.findYourWay}>
         <p className={styles.sectionBadge}>FIND YOUR WAY</p>
-        <h2 className={styles.sectionTitle}>Travel that feels like you.</h2>
+        <h2 className={styles.sectionTitle}>Choose your travel experience.</h2>
 
         <div className={styles.cardGrid}>
-          {TRAVEL_STYLES.map((item) => (
-            <div
+          {GATEWAYS.map((item) => (
+            <Link
               key={item.title}
+              to={item.to}
               className={styles.card}
               style={
                 item.image
@@ -57,7 +67,9 @@ export default function Home() {
               }
             >
               <p className={styles.cardTitle}>{item.title}</p>
-            </div>
+              <p className={styles.cardCopy}>{item.copy}</p>
+              <span className={styles.cardButton}>{item.button}</span>
+            </Link>
           ))}
         </div>
       </section>

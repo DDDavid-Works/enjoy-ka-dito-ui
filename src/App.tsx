@@ -5,6 +5,9 @@ import TourPackages from './pages/TourPackages'
 import PackageDetail from './pages/PackageDetail'
 import ContactUs from './pages/ContactUs'
 import RequestQuote from './pages/RequestQuote'
+import CorporateTeamBuilding from './pages/CorporateTeamBuilding'
+import FamilySeniorTours from './pages/FamilySeniorTours'
+import InboundForeigners from './pages/InboundForeigners'
 import AboutUs from './pages/AboutUs'
 import TravelServices from './pages/TravelServices'
 import AdminLogin from './pages/admin/Login'
@@ -25,6 +28,9 @@ export default function App() {
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/request-a-quote" element={<RequestQuote />} />
+        <Route path="/corporate-team-building" element={<CorporateTeamBuilding />} />
+        <Route path="/family-senior-tours" element={<FamilySeniorTours />} />
+        <Route path="/philippines-inbound" element={<InboundForeigners />} />
       </Route>
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route

@@ -86,11 +86,13 @@ export default function InquiriesList() {
                 <div>
                   <p className={styles.name}>
                     {inquiry.name}
+                    {inquiry.designation ? <span className={styles.company}>, {inquiry.designation}</span> : null}
                     {inquiry.companyName ? <span className={styles.company}> · {inquiry.companyName}</span> : null}
                   </p>
                   <p className={styles.meta}>
                     {new Date(inquiry.createdAt).toLocaleString()}
                     {inquiry.travelerType ? ` · ${inquiry.travelerType}` : ''}
+                    {inquiry.groupType ? ` · ${inquiry.groupType} traveler(s)` : ''}
                     {inquiry.package ? ` · ${inquiry.package.title}` : ''}
                   </p>
                 </div>
@@ -118,6 +120,20 @@ export default function InquiriesList() {
                 {inquiry.destination && <span className={styles.detail}>Destination: {inquiry.destination}</span>}
                 {inquiry.travelerCount && <span className={styles.detail}>Pax: {inquiry.travelerCount}</span>}
                 {inquiry.travelDates && <span className={styles.detail}>Dates: {inquiry.travelDates}</span>}
+                {inquiry.budgetBracket && <span className={styles.detail}>Budget: {inquiry.budgetBracket}</span>}
+                {inquiry.countryOfResidence && (
+                  <span className={styles.detail}>Country: {inquiry.countryOfResidence}</span>
+                )}
+                {inquiry.travelingWithSeniorsOrChildren && (
+                  <span className={styles.detail}>
+                    Seniors/children traveling: {inquiry.travelingWithSeniorsOrChildren}
+                  </span>
+                )}
+                {inquiry.flightsBooked && <span className={styles.detail}>Flights booked: {inquiry.flightsBooked}</span>}
+                {inquiry.desiredDestinations && (
+                  <span className={styles.detail}>Wants to visit: {inquiry.desiredDestinations}</span>
+                )}
+                {inquiry.tripDuration && <span className={styles.detail}>Trip length: {inquiry.tripDuration}</span>}
               </div>
 
               {inquiry.message && <p className={styles.message}>{inquiry.message}</p>}
