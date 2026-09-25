@@ -14,6 +14,7 @@ export type Inquiry = {
   travelerCount?: string
   travelDates?: string
   message?: string
+  package?: { id: string; title: string; slug: string } | null
   status: InquiryStatus
   createdAt: string
 }

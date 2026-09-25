@@ -32,6 +32,10 @@ export default function AdminDashboard() {
             <span className={styles.moduleTitle}>Tour Packages</span>
             <span className={styles.moduleDesc}>Create, edit, and publish tour packages.</span>
           </Link>
+          <Link to="/admin/inquiries" className={styles.moduleCard}>
+            <span className={styles.moduleTitle}>Inquiries</span>
+            <span className={styles.moduleDesc}>Review quote requests and contact messages.</span>
+          </Link>
         </div>
       </main>
     </div>

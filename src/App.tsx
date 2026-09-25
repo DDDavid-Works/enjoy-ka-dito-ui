@@ -11,6 +11,7 @@ import AdminLogin from './pages/admin/Login'
 import AdminDashboard from './pages/admin/Dashboard'
 import PackagesList from './pages/admin/packages/PackagesList'
 import PackageForm from './pages/admin/packages/PackageForm'
+import InquiriesList from './pages/admin/inquiries/InquiriesList'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -55,6 +56,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <PackageForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/inquiries"
+        element={
+          <ProtectedRoute>
+            <InquiriesList />
           </ProtectedRoute>
         }
       />
