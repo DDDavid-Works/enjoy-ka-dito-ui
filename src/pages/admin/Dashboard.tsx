@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import styles from './Dashboard.module.css'
 
@@ -25,7 +25,14 @@ export default function AdminDashboard() {
 
       <main className={styles.content}>
         <h1 className={styles.title}>Welcome, {admin?.name}.</h1>
-        <p className={styles.subtext}>The CMS modules (tour packages, inquiries) will live here.</p>
+        <p className={styles.subtext}>Manage the site's content below.</p>
+
+        <div className={styles.modules}>
+          <Link to="/admin/packages" className={styles.moduleCard}>
+            <span className={styles.moduleTitle}>Tour Packages</span>
+            <span className={styles.moduleDesc}>Create, edit, and publish tour packages.</span>
+          </Link>
+        </div>
       </main>
     </div>
   )

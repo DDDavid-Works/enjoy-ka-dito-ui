@@ -29,7 +29,7 @@ export default function Header() {
         ))}
       </nav>
 
-      <NavLink to="/contact-us" className={styles.cta}>
+      <NavLink to="/request-a-quote" className={styles.cta}>
         Request a Quote
       </NavLink>
     </header>

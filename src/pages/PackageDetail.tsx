@@ -62,7 +62,7 @@ export default function PackageDetail() {
           <div className={styles.sidebarCard}>
             <p className={styles.price}>{tour.price ?? 'Custom pricing'}</p>
             <p className={styles.priceNote}>Per person, based on double occupancy.</p>
-            <Link to="/contact-us" className={styles.cta}>
+            <Link to={`/request-a-quote?destination=${encodeURIComponent(tour.title)}`} className={styles.cta}>
               Request a Quote
             </Link>
 

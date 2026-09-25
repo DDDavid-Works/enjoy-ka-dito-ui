@@ -55,3 +55,37 @@
   font-size: 15px;
   color: var(--color-text);
 }
+
+.modules {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  max-width: 700px;
+}
+
+.moduleCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  background: var(--color-white);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(30, 58, 114, 0.08);
+  transition: transform 0.15s ease;
+}
+
+.moduleCard:hover {
+  transform: translateY(-2px);
+}
+
+.moduleTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.moduleDesc {
+  font-size: 13px;
+  color: var(--color-text);
+}

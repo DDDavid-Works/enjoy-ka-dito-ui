@@ -34,7 +34,7 @@ export default function Home() {
             <NavLink to="/tour-packages" className={styles.heroLinkAction}>
               Explore Tour Packages
             </NavLink>
-            <NavLink to="/contact-us" className={styles.heroOutlineAction}>
+            <NavLink to="/request-a-quote" className={styles.heroOutlineAction}>
               Request a Quote
             </NavLink>
           </div>
