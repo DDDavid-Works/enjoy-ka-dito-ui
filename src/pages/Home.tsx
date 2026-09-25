@@ -6,14 +6,14 @@ const GATEWAYS = [
     title: 'Corporate Team Building',
     copy: 'Complete logistics, official invoicing, custom domestic & Asian itineraries, and on-site coordinators for teams of all sizes.',
     button: 'Explore Corporate Packages',
-    image: null,
+    image: '/images/corporate-team-building.jpg',
     to: '/corporate-team-building',
   },
   {
     title: 'Family & Senior Tours',
     copy: 'Relaxed pacing, private transport, senior-friendly steps, and hassle-free, door-to-door managed itineraries.',
     button: 'View Family Tour Packages',
-    image: null,
+    image: '/images/family-senior-tours.jpg',
     to: '/family-senior-tours',
   },
   {
