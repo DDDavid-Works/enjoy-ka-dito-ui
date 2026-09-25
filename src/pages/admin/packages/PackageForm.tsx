@@ -41,7 +41,17 @@ export default function PackageForm() {
         const pkg = all.find((p) => p.id === id)
         if (!pkg) throw new Error('Package not found.')
         const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = pkg
-        setForm(rest)
+        setForm({
+          ...rest,
+          location: rest.location ?? '',
+          duration: rest.duration ?? '',
+          price: rest.price ?? '',
+          pax: rest.pax ?? '',
+          summary: rest.summary ?? '',
+          termsAndConditions: rest.termsAndConditions ?? '',
+          mainImage: rest.mainImage ?? '',
+          poster: rest.poster ?? '',
+        })
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load package.'))
       .finally(() => setLoading(false))

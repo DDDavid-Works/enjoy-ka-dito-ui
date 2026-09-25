@@ -1,22 +1,36 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FILTERS, TOURS, type Category } from '../data/tours'
+import { packagesApi } from '../lib/api'
+import { PACKAGE_CATEGORIES, type Package, type PackageCategory } from '../types/package'
 import styles from './TourPackages.module.css'
 
-export default function TourPackages() {
-  const [query, setQuery] = useState('')
-  const [filter, setFilter] = useState<Category | 'All'>('All')
+const FILTERS: Array<PackageCategory | 'All'> = ['All', ...PACKAGE_CATEGORIES]
 
-  const filteredTours = useMemo(() => {
-    return TOURS.filter((tour) => {
-      const matchesFilter = filter === 'All' || tour.category === filter
+export default function TourPackages() {
+  const [packages, setPackages] = useState<Package[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [filter, setFilter] = useState<PackageCategory | 'All'>('All')
+
+  useEffect(() => {
+    packagesApi
+      .list()
+      .then(setPackages)
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load tour packages.'))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const filteredPackages = useMemo(() => {
+    return packages.filter((pkg) => {
+      const matchesFilter = filter === 'All' || pkg.category === filter
       const matchesQuery =
         query.trim() === '' ||
-        tour.title.toLowerCase().includes(query.toLowerCase()) ||
-        tour.location.toLowerCase().includes(query.toLowerCase())
+        pkg.title.toLowerCase().includes(query.toLowerCase()) ||
+        (pkg.location ?? '').toLowerCase().includes(query.toLowerCase())
       return matchesFilter && matchesQuery
     })
-  }, [query, filter])
+  }, [packages, query, filter])
 
   return (
     <main>
@@ -52,20 +66,23 @@ export default function TourPackages() {
       </section>
 
       <section className={styles.grid}>
-        {filteredTours.map((tour) => (
-          <Link key={tour.slug} to={`/tour-packages/${tour.slug}`} className={styles.card}>
-            <div className={styles.cardImage} style={{ backgroundImage: `url(${tour.image})` }} />
+        {error && <p className={styles.empty}>{error}</p>}
+        {!loading && !error && filteredPackages.length === 0 && (
+          <p className={styles.empty}>No tours match your search yet.</p>
+        )}
+
+        {filteredPackages.map((pkg) => (
+          <Link key={pkg.slug} to={`/tour-packages/${pkg.slug}`} className={styles.card}>
+            <div className={styles.cardImage} style={{ backgroundImage: `url(${pkg.mainImage})` }} />
             <div className={styles.cardBody}>
-              <p className={styles.cardTitle}>{tour.title}</p>
+              <p className={styles.cardTitle}>{pkg.title}</p>
               <p className={styles.cardMeta}>
-                {tour.location} · {tour.duration}
+                {pkg.location} · {pkg.duration}
               </p>
-              <p className={styles.cardPrice}>{tour.price ?? 'Request a Quote'}</p>
+              <p className={styles.cardPrice}>{pkg.price ?? 'Request a Quote'}</p>
             </div>
           </Link>
         ))}
-
-        {filteredTours.length === 0 && <p className={styles.empty}>No tours match your search yet.</p>}
       </section>
     </main>
   )
