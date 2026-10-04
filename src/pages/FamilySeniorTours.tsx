@@ -68,6 +68,7 @@ export default function FamilySeniorTours() {
         phone: String(data.get('phone') ?? ''),
         travelerType: data.get('travelerType') === 'Senior Group' ? 'Senior Group' : 'Family',
         destination: String(data.get('destination') ?? '') || undefined,
+        packageId: String(data.get('packageId') ?? '') || undefined,
         travelerCount: String(data.get('travelerCount') ?? '') || undefined,
         travelDates: String(data.get('travelDates') ?? '') || undefined,
         message: String(data.get('message') ?? '') || undefined,

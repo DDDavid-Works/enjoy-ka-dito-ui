@@ -31,6 +31,7 @@ export default function RequestQuote() {
           | (typeof TRAVELER_TYPES)[number]
           | undefined,
         destination: String(data.get('destination') ?? '') || undefined,
+        packageId: String(data.get('packageId') ?? '') || undefined,
         travelerCount: String(data.get('travelerCount') ?? '') || undefined,
         travelDates: String(data.get('travelDates') ?? '') || undefined,
         message: String(data.get('message') ?? '') || undefined,

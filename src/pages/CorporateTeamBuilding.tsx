@@ -71,6 +71,7 @@ export default function CorporateTeamBuilding() {
         phone: String(data.get('phone') ?? ''),
         travelerType: 'Corporate Group',
         destination: String(data.get('destination') ?? '') || undefined,
+        packageId: String(data.get('packageId') ?? '') || undefined,
         travelerCount: String(data.get('travelerCount') ?? '') || undefined,
         travelDates: String(data.get('travelDates') ?? '') || undefined,
         budgetBracket: String(data.get('budgetBracket') ?? '') || undefined,

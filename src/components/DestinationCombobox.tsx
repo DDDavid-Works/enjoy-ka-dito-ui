@@ -4,15 +4,17 @@ import styles from './DestinationCombobox.module.css'
 
 type Props = {
   name: string
+  // Name of the hidden field that carries the matched tour's id (empty for free text).
+  packageFieldName?: string
   placeholder?: string
   defaultValue?: string
   required?: boolean
 }
 
 // Text input that suggests current tour titles but accepts any free value.
-export default function DestinationCombobox({ name, placeholder, defaultValue = '', required }: Props) {
+export default function DestinationCombobox({ name, packageFieldName = 'packageId', placeholder, defaultValue = '', required }: Props) {
   const [value, setValue] = useState(defaultValue)
-  const [options, setOptions] = useState<string[]>([])
+  const [tours, setTours] = useState<{ id: string; title: string }[]>([])
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
 
@@ -23,8 +25,12 @@ export default function DestinationCombobox({ name, placeholder, defaultValue = 
       .list()
       .then((packages) => {
         if (cancelled) return
-        const titles = [...new Set(packages.map((p) => p.title.trim()).filter(Boolean))]
-        setOptions(titles.sort((a, b) => a.localeCompare(b)))
+        setTours(
+          packages
+            .map((p) => ({ id: p.id, title: p.title.trim() }))
+            .filter((t) => t.title)
+            .sort((a, b) => a.title.localeCompare(b.title)),
+        )
       })
       .catch(() => {
         // Suggestions are optional; the field still works as a plain text input.
@@ -35,10 +41,15 @@ export default function DestinationCombobox({ name, placeholder, defaultValue = 
     }
   }, [])
 
+  const options = useMemo(() => [...new Set(tours.map((t) => t.title))], [tours])
+
   const matches = useMemo(() => {
     const query = value.trim().toLowerCase()
     return query ? options.filter((o) => o.toLowerCase().includes(query)) : options
   }, [options, value])
+
+  // Linked only while the text exactly matches a tour title; free text carries no link.
+  const packageId = tours.find((t) => t.title.toLowerCase() === value.trim().toLowerCase())?.id ?? ''
 
   const showList = open && matches.length > 0
 
@@ -85,6 +96,8 @@ export default function DestinationCombobox({ name, placeholder, defaultValue = 
         }}
         onKeyDown={handleKeyDown}
       />
+
+      <input type="hidden" name={packageFieldName} value={packageId} />
 
       {showList && (
         <ul className={styles.list} role="listbox">
