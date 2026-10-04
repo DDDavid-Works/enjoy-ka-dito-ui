@@ -204,3 +204,30 @@
 .jumpForm button:hover {
   background: var(--color-bg);
 }
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.searchInput,
+.regionSelect {
+  padding: 9px 12px;
+  border: 1px solid rgba(30, 58, 114, 0.16);
+  border-radius: 8px;
+  background: var(--color-white);
+  font-size: 14px;
+}
+
+.searchInput {
+  flex: 1;
+  max-width: 320px;
+}
+
+.resultCount {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--color-text);
+}

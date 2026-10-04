@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { hotelsApi } from '../../../lib/api'
 import { formatStarRating, type Hotel } from '../../../types/hotel'
@@ -12,6 +12,8 @@ export default function HotelsList() {
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [jumpValue, setJumpValue] = useState('')
+  const [search, setSearch] = useState('')
+  const [region, setRegion] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -45,9 +47,20 @@ export default function HotelsList() {
     }
   }
 
-  const totalPages = Math.max(1, Math.ceil(hotels.length / PAGE_SIZE))
+  const regions = useMemo(() => [...new Set(hotels.map((h) => h.region))].sort(), [hotels])
+
+  const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase()
+    return hotels.filter(
+      (h) => (!region || h.region === region) && (!query || h.name.toLowerCase().includes(query)),
+    )
+  }, [hotels, search, region])
+
+  const isFiltering = search.trim() !== '' || region !== ''
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const currentPage = Math.min(page, totalPages)
-  const pageHotels = hotels.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  const pageHotels = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   function goToPage(value: number) {
     setPage(Math.min(totalPages, Math.max(1, value)))
@@ -85,6 +98,43 @@ export default function HotelsList() {
         )}
 
         {hotels.length > 0 && (
+          <div className={styles.filters}>
+            <input
+              type="search"
+              className={styles.searchInput}
+              placeholder="Search hotel name"
+              aria-label="Search hotel name"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                setPage(1)
+              }}
+            />
+            <select
+              className={styles.regionSelect}
+              aria-label="Filter by region"
+              value={region}
+              onChange={(e) => {
+                setRegion(e.target.value)
+                setPage(1)
+              }}
+            >
+              <option value="">All regions</option>
+              {regions.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+            <span className={styles.resultCount}>
+              {isFiltering ? `${filtered.length} of ${hotels.length}` : hotels.length} hotels
+            </span>
+          </div>
+        )}
+
+        {hotels.length > 0 && filtered.length === 0 && <p className={styles.empty}>No hotels match your filters.</p>}
+
+        {filtered.length > 0 && (
           <table className={styles.table}>
             <colgroup>
               <col style={{ width: '26%' }} />
@@ -136,7 +186,7 @@ export default function HotelsList() {
               ← Prev
             </button>
             <span className={styles.pageInfo}>
-              Page {currentPage} of {totalPages} · {hotels.length} hotels
+              Page {currentPage} of {totalPages} · {filtered.length} hotels
             </span>
             <button type="button" disabled={currentPage === totalPages} onClick={() => goToPage(currentPage + 1)}>
               Next →
