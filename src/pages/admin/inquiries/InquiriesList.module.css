@@ -194,17 +194,29 @@ a.detail:hover {
 
 .cardActions {
   margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(30, 58, 114, 0.08);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 12px;
 }
 
+/* Quotations stack vertically, one per line. */
 .quotationList {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Phones: let the button drop below the chips (still on the right). */
+@media (max-width: 520px) {
+  .cardActions {
+    flex-wrap: wrap;
+  }
 }
 
 .quotationChip {
@@ -235,6 +247,9 @@ a.detail:hover {
 }
 
 .quoteButton {
+  flex-shrink: 0;
+  margin-left: auto;
+  white-space: nowrap;
   padding: 8px 16px;
   border: 1px solid var(--color-primary);
   border-radius: 999px;
