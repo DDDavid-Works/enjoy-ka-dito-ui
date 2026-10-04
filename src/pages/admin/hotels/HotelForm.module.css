@@ -191,3 +191,12 @@
   color: var(--color-text);
   opacity: 0.75;
 }
+
+.success {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+  font-size: 14px;
+  font-weight: 600;
+}

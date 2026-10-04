@@ -21,6 +21,7 @@ export default function HotelForm() {
   const [loading, setLoading] = useState(isEditing)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isEditing || !id) return
@@ -46,15 +47,17 @@ export default function HotelForm() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
+    setSuccess(null)
     setSubmitting(true)
 
     try {
       if (isEditing && id) {
         await hotelsApi.update(id, form)
+        setSuccess('Hotel saved successfully.')
       } else {
         await hotelsApi.create(form)
+        navigate('/admin/hotels')
       }
-      navigate('/admin/hotels')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save hotel.')
     } finally {
@@ -77,7 +80,7 @@ export default function HotelForm() {
 
         <h1 className={styles.title}>{isEditing ? 'Edit Hotel' : 'New Hotel'}</h1>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit} onChange={() => setSuccess(null)}>
           <div className={styles.field}>
             <label>Hotel Name</label>
             <input value={form.name} onChange={(e) => updateField('name', e.target.value)} required />
@@ -128,6 +131,11 @@ export default function HotelForm() {
           </div>
 
           {error && <p className={styles.error}>{error}</p>}
+          {success && (
+            <p className={styles.success} role="status">
+              {success}
+            </p>
+          )}
 
           <div className={styles.actions}>
             <button type="submit" className={styles.submit} disabled={submitting}>
