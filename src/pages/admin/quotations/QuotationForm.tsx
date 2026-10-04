@@ -47,6 +47,7 @@ export default function QuotationForm() {
   const [form, setForm] = useState<QuotationInput>(() => ({ ...EMPTY, quoteDate: isEditing ? null : todayIso() }))
   const [savedTitle, setSavedTitle] = useState('')
   const [basedOn, setBasedOn] = useState<Quotation['package']>(null)
+  const [fromInquiry, setFromInquiry] = useState<Quotation['inquiry']>(null)
   const [packages, setPackages] = useState<Package[]>([])
   const [hotels, setHotels] = useState<Hotel[]>([])
   const [loading, setLoading] = useState(isEditing)
@@ -111,6 +112,7 @@ export default function QuotationForm() {
       .then((quotation) => {
         setSavedTitle(quotation.title)
         setBasedOn(quotation.package ?? null)
+        setFromInquiry(quotation.inquiry ?? null)
         setForm({
           title: quotation.title,
           customerName: quotation.customerName ?? '',
@@ -276,6 +278,12 @@ export default function QuotationForm() {
           {isEditing && basedOn && (
             <p className={styles.hint}>
               Started from <Link to={`/admin/packages/${basedOn.id}/edit`}>{basedOn.title}</Link>
+            </p>
+          )}
+
+          {isEditing && fromInquiry && (
+            <p className={styles.hint}>
+              Created from the inquiry by {fromInquiry.name} (see <Link to="/admin/inquiries">Inquiries</Link>)
             </p>
           )}
 

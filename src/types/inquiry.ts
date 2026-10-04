@@ -31,6 +31,7 @@ export type Inquiry = {
   tripDuration?: string
   message?: string
   package?: { id: string; title: string; slug: string } | null
+  quotations?: { id: string; title: string }[]
   type: InquiryType
   status: InquiryStatus
   createdAt: string

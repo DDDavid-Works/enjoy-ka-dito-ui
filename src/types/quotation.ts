@@ -7,6 +7,7 @@ export type Quotation = {
   quoteDate: string | null
   remarks: string
   package?: { id: string; title: string } | null
+  inquiry?: { id: string; name: string } | null
   inclusions: QuotationInclusion[]
   accommodations: QuotationAccommodation[]
   exclusions: string[]
@@ -15,7 +16,9 @@ export type Quotation = {
   updatedAt: string
 }
 
-export type QuotationInput = Omit<Quotation, 'id' | 'package' | 'createdAt' | 'updatedAt'> & {
+export type QuotationInput = Omit<Quotation, 'id' | 'package' | 'inquiry' | 'createdAt' | 'updatedAt'> & {
   // Only used on create: the package this quotation was started from.
   packageId?: string
+  // Only used on create: the inquiry this quotation is created from.
+  inquiryId?: string
 }

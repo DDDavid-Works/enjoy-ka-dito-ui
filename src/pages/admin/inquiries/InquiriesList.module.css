@@ -195,7 +195,43 @@ a.detail:hover {
 .cardActions {
   margin-top: 14px;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.quotationList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quotationChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  background: rgba(30, 58, 114, 0.08);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.quotationChip:hover {
+  background: rgba(30, 58, 114, 0.15);
+}
+
+.quotationTag {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-white);
 }
 
 .quoteButton {

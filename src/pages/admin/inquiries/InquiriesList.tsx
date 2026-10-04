@@ -176,8 +176,22 @@ export default function InquiriesList() {
               {inquiry.message && <p className={styles.message}>{inquiry.message}</p>}
 
               <div className={styles.cardActions}>
+                <div className={styles.quotationList}>
+                  {inquiry.quotations?.map((quotation) => (
+                    <Link
+                      key={quotation.id}
+                      className={styles.quotationChip}
+                      to={`/admin/quotations/${quotation.id}/edit`}
+                      title="Open this quotation"
+                    >
+                      <span className={styles.quotationTag}>Quotation</span>
+                      <span>{quotation.title}</span>
+                      <span aria-hidden="true">→</span>
+                    </Link>
+                  ))}
+                </div>
                 <Link className={styles.quoteButton} to={`/admin/quotations/new?inquiry=${inquiry.id}`}>
-                  Create Quotation
+                  {inquiry.quotations?.length ? 'Create Another Quotation' : 'Create Quotation'}
                 </Link>
               </div>
             </div>
