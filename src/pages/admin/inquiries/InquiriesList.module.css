@@ -179,3 +179,15 @@ a.detail:hover {
     flex-direction: column;
   }
 }
+
+.packageLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.packageLink:hover {
+  color: var(--color-primary-light);
+}

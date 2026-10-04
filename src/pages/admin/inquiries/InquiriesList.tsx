@@ -121,13 +121,14 @@ export default function InquiriesList() {
                   </a>
                 )}
                 {inquiry.package && (
-                  <Link className={styles.detail} to={`/admin/packages/${inquiry.package.id}/edit`}>
+                  <Link className={styles.packageLink} to={`/admin/packages/${inquiry.package.id}/edit`}>
                     Package: {inquiry.package.title}
                   </Link>
                 )}
-                {inquiry.destination && !inquiry.package && (
-                  <span className={styles.detail}>Destination: {inquiry.destination}</span>
-                )}
+                {inquiry.destination &&
+                  inquiry.destination.trim().toLowerCase() !== inquiry.package?.title.trim().toLowerCase() && (
+                    <span className={styles.detail}>Destination: {inquiry.destination}</span>
+                  )}
                 {inquiry.travelerCount && <span className={styles.detail}>Pax: {inquiry.travelerCount}</span>}
                 {inquiry.travelDates && <span className={styles.detail}>Dates: {inquiry.travelDates}</span>}
                 {inquiry.budgetBracket && <span className={styles.detail}>Budget: {inquiry.budgetBracket}</span>}
