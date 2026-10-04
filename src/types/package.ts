@@ -16,6 +16,18 @@ export type QuotationInclusion = {
   details: QuotationDetail[]
 }
 
+export type QuotationAccommodation = {
+  hotelId: string
+  nights: number
+  remarks?: string
+  ratePerHead?: number
+}
+
+export type QuotationOptionalTour = {
+  text: string
+  details: string[]
+}
+
 export type Package = {
   id: string
   title: string
@@ -31,6 +43,9 @@ export type Package = {
   exclusions: string[]
   termsAndConditions?: string
   quotationInclusions: QuotationInclusion[]
+  quotationAccommodations: QuotationAccommodation[]
+  quotationExclusions: string[]
+  quotationOptionalTours: QuotationOptionalTour[]
   mainImage?: string
   poster?: string
   gallery: string[]

@@ -1,8 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { packagesApi } from '../../../lib/api'
+import { hotelsApi, packagesApi } from '../../../lib/api'
+import type { Hotel } from '../../../types/hotel'
 import { PACKAGE_CATEGORIES, type ItineraryDay, type PackageInput } from '../../../types/package'
+import QuotationAccommodationsEditor from './QuotationAccommodationsEditor'
+import QuotationExclusionsEditor from './QuotationExclusionsEditor'
 import QuotationInclusionsEditor from './QuotationInclusionsEditor'
+import QuotationOptionalToursEditor from './QuotationOptionalToursEditor'
 import styles from './PackageForm.module.css'
 
 const EMPTY: PackageInput = {
@@ -18,6 +22,9 @@ const EMPTY: PackageInput = {
   exclusions: [],
   termsAndConditions: '',
   quotationInclusions: [],
+  quotationAccommodations: [],
+  quotationExclusions: [],
+  quotationOptionalTours: [],
   mainImage: '',
   poster: '',
   gallery: [],
@@ -33,10 +40,12 @@ export default function PackageForm() {
 
   const [tab, setTab] = useState<Tab>('website')
   const [savedTitle, setSavedTitle] = useState('')
+  const [hotels, setHotels] = useState<Hotel[]>([])
   const [form, setForm] = useState<PackageInput>(EMPTY)
   const [loading, setLoading] = useState(isEditing)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isEditing) return
@@ -63,6 +72,17 @@ export default function PackageForm() {
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load package.'))
       .finally(() => setLoading(false))
   }, [id, isEditing])
+
+  useEffect(() => {
+    let cancelled = false
+    hotelsApi
+      .list()
+      .then((data) => !cancelled && setHotels(data))
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   function updateField<K extends keyof PackageInput>(key: K, value: PackageInput[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -104,6 +124,7 @@ export default function PackageForm() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
+    setSuccess(null)
 
     if (!form.title.trim()) {
       setTab('website')
@@ -117,6 +138,13 @@ export default function PackageForm() {
       inclusions: form.inclusions.map((s) => s.trim()).filter(Boolean),
       exclusions: form.exclusions.map((s) => s.trim()).filter(Boolean),
       itinerary: form.itinerary.filter((day) => day.label.trim() || day.description.trim()),
+      quotationAccommodations: form.quotationAccommodations
+        .filter((a) => a.hotelId)
+        .map((a) => ({ ...a, remarks: a.remarks?.trim() || undefined })),
+      quotationExclusions: form.quotationExclusions.map((e) => e.trim()).filter(Boolean),
+      quotationOptionalTours: form.quotationOptionalTours
+        .map((tour) => ({ text: tour.text.trim(), details: tour.details.map((d) => d.trim()).filter(Boolean) }))
+        .filter((tour) => tour.text || tour.details.length),
       quotationInclusions: form.quotationInclusions
         .map((item) => ({
           text: item.text.trim(),
@@ -130,10 +158,14 @@ export default function PackageForm() {
     try {
       if (isEditing && id) {
         await packagesApi.update(id, payload)
+        // Stay on the page: sync the cleaned values and confirm the save.
+        setForm(payload)
+        setSavedTitle(payload.title)
+        setSuccess('Package saved successfully.')
       } else {
         await packagesApi.create(payload)
+        navigate('/admin/packages')
       }
-      navigate('/admin/packages')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save package.')
     } finally {
@@ -180,7 +212,7 @@ export default function PackageForm() {
           </button>
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit} onChange={() => setSuccess(null)}>
           {tab === 'website' && (
             <>
               <div className={styles.field}>
@@ -338,13 +370,33 @@ export default function PackageForm() {
           )}
 
           {tab === 'quotation' && (
-            <QuotationInclusionsEditor
-              value={form.quotationInclusions}
-              onChange={(next) => updateField('quotationInclusions', next)}
-            />
+            <>
+              <QuotationInclusionsEditor
+                value={form.quotationInclusions}
+                onChange={(next) => updateField('quotationInclusions', next)}
+              />
+              <QuotationAccommodationsEditor
+                value={form.quotationAccommodations}
+                hotels={hotels}
+                onChange={(next) => updateField('quotationAccommodations', next)}
+              />
+              <QuotationExclusionsEditor
+                value={form.quotationExclusions}
+                onChange={(next) => updateField('quotationExclusions', next)}
+              />
+              <QuotationOptionalToursEditor
+                value={form.quotationOptionalTours}
+                onChange={(next) => updateField('quotationOptionalTours', next)}
+              />
+            </>
           )}
 
           {error && <p className={styles.error}>{error}</p>}
+          {success && (
+            <p className={styles.success} role="status">
+              {success}
+            </p>
+          )}
 
           <div className={styles.actions}>
             <button type="submit" className={styles.submit} disabled={submitting}>

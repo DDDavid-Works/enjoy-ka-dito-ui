@@ -244,3 +244,63 @@
   font-weight: 600;
   color: var(--color-text);
 }
+
+.accommodationGrid {
+  display: grid;
+  grid-template-columns: 1fr 100px 180px;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.combobox {
+  position: relative;
+}
+
+.combobox input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.comboList {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 260px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--color-white);
+  border: 1px solid rgba(30, 58, 114, 0.16);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(30, 58, 114, 0.14);
+}
+
+.comboOption,
+.comboEmpty {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.comboEmpty {
+  cursor: default;
+  color: var(--color-text);
+  opacity: 0.7;
+}
+
+.comboOptionActive {
+  background: rgba(30, 58, 114, 0.08);
+}
+
+.success {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+  font-size: 14px;
+  font-weight: 600;
+}
