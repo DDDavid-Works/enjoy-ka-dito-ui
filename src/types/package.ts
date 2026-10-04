@@ -6,6 +6,16 @@ export type ItineraryDay = {
   description: string
 }
 
+export type QuotationDetail = {
+  text: string
+  details: string[]
+}
+
+export type QuotationInclusion = {
+  text: string
+  details: QuotationDetail[]
+}
+
 export type Package = {
   id: string
   title: string
@@ -20,6 +30,7 @@ export type Package = {
   inclusions: string[]
   exclusions: string[]
   termsAndConditions?: string
+  quotationInclusions: QuotationInclusion[]
   mainImage?: string
   poster?: string
   gallery: string[]

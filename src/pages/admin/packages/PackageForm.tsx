@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { packagesApi } from '../../../lib/api'
 import { PACKAGE_CATEGORIES, type ItineraryDay, type PackageInput } from '../../../types/package'
+import QuotationInclusionsEditor from './QuotationInclusionsEditor'
 import styles from './PackageForm.module.css'
 
 const EMPTY: PackageInput = {
@@ -16,17 +17,22 @@ const EMPTY: PackageInput = {
   inclusions: [],
   exclusions: [],
   termsAndConditions: '',
+  quotationInclusions: [],
   mainImage: '',
   poster: '',
   gallery: [],
   status: 'draft',
 }
 
+type Tab = 'website' | 'quotation'
+
 export default function PackageForm() {
   const { id } = useParams()
   const isEditing = Boolean(id)
   const navigate = useNavigate()
 
+  const [tab, setTab] = useState<Tab>('website')
+  const [savedTitle, setSavedTitle] = useState('')
   const [form, setForm] = useState<PackageInput>(EMPTY)
   const [loading, setLoading] = useState(isEditing)
   const [submitting, setSubmitting] = useState(false)
@@ -41,6 +47,7 @@ export default function PackageForm() {
         const pkg = all.find((p) => p.id === id)
         if (!pkg) throw new Error('Package not found.')
         const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = pkg
+        setSavedTitle(pkg.title)
         setForm({
           ...rest,
           location: rest.location ?? '',
@@ -97,6 +104,12 @@ export default function PackageForm() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
+
+    if (!form.title.trim()) {
+      setTab('website')
+      setError('Title is required.')
+      return
+    }
     setSubmitting(true)
 
     const payload: PackageInput = {
@@ -104,6 +117,14 @@ export default function PackageForm() {
       inclusions: form.inclusions.map((s) => s.trim()).filter(Boolean),
       exclusions: form.exclusions.map((s) => s.trim()).filter(Boolean),
       itinerary: form.itinerary.filter((day) => day.label.trim() || day.description.trim()),
+      quotationInclusions: form.quotationInclusions
+        .map((item) => ({
+          text: item.text.trim(),
+          details: item.details
+            .map((d) => ({ text: d.text.trim(), details: d.details.map((sub) => sub.trim()).filter(Boolean) }))
+            .filter((d) => d.text || d.details.length),
+        }))
+        .filter((item) => item.text || item.details.length),
     }
 
     try {
@@ -133,159 +154,195 @@ export default function PackageForm() {
           ← Back to packages
         </Link>
 
-        <h1 className={styles.title}>{isEditing ? 'Edit Package' : 'New Package'}</h1>
+        <h1 className={isEditing ? `${styles.title} ${styles.titleWithName}` : styles.title}>
+          {isEditing ? 'Edit Package' : 'New Package'}
+        </h1>
+        {isEditing && <p className={styles.packageName}>{savedTitle}</p>}
+
+        <div className={styles.tabs} role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'website'}
+            className={tab === 'website' ? `${styles.tab} ${styles.tabActive}` : styles.tab}
+            onClick={() => setTab('website')}
+          >
+            Website
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'quotation'}
+            className={tab === 'quotation' ? `${styles.tab} ${styles.tabActive}` : styles.tab}
+            onClick={() => setTab('quotation')}
+          >
+            Quotation
+          </button>
+        </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.field}>
-            <label>Title</label>
-            <input value={form.title} onChange={(e) => updateField('title', e.target.value)} required />
-          </div>
+          {tab === 'website' && (
+            <>
+              <div className={styles.field}>
+                <label>Title</label>
+                <input value={form.title} onChange={(e) => updateField('title', e.target.value)} required />
+              </div>
 
-          <div className={styles.row}>
-            <div className={styles.field}>
-              <label>Location</label>
-              <input value={form.location} onChange={(e) => updateField('location', e.target.value)} />
-            </div>
-            <div className={styles.field}>
-              <label>Duration</label>
-              <input
-                value={form.duration}
-                onChange={(e) => updateField('duration', e.target.value)}
-                placeholder="e.g. 4 days"
-              />
-            </div>
-          </div>
-
-          <div className={styles.row}>
-            <div className={styles.field}>
-              <label>Category</label>
-              <select value={form.category} onChange={(e) => updateField('category', e.target.value as PackageInput['category'])}>
-                {PACKAGE_CATEGORIES.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className={styles.field}>
-              <label>Status</label>
-              <select value={form.status} onChange={(e) => updateField('status', e.target.value as PackageInput['status'])}>
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
-            </div>
-          </div>
-
-          <div className={styles.row}>
-            <div className={styles.field}>
-              <label>Price</label>
-              <input
-                value={form.price}
-                onChange={(e) => updateField('price', e.target.value)}
-                placeholder="e.g. From ₱12,500 (leave blank for 'Request a Quote')"
-              />
-            </div>
-            <div className={styles.field}>
-              <label>No. of Pax</label>
-              <input
-                value={form.pax}
-                onChange={(e) => updateField('pax', e.target.value)}
-                placeholder="e.g. 2–4 pax or Min 15 pax for groups"
-              />
-            </div>
-          </div>
-
-          <div className={styles.field}>
-            <label>Summary</label>
-            <textarea value={form.summary} onChange={(e) => updateField('summary', e.target.value)} />
-          </div>
-
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Itinerary</div>
-            {form.itinerary.map((day, index) => (
-              <div key={index} className={styles.listItem}>
-                <div className={styles.itineraryItem}>
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Location</label>
+                  <input value={form.location} onChange={(e) => updateField('location', e.target.value)} />
+                </div>
+                <div className={styles.field}>
+                  <label>Duration</label>
                   <input
-                    value={day.label}
-                    onChange={(e) => updateItinerary(index, 'label', e.target.value)}
-                    placeholder="Day 1"
-                  />
-                  <textarea
-                    value={day.description}
-                    onChange={(e) => updateItinerary(index, 'description', e.target.value)}
-                    placeholder="What happens this day"
+                    value={form.duration}
+                    onChange={(e) => updateField('duration', e.target.value)}
+                    placeholder="e.g. 4 days"
                   />
                 </div>
-                <button type="button" className={styles.removeButton} onClick={() => removeItineraryDay(index)}>
-                  Remove
+              </div>
+
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Category</label>
+                  <select value={form.category} onChange={(e) => updateField('category', e.target.value as PackageInput['category'])}>
+                    {PACKAGE_CATEGORIES.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.field}>
+                  <label>Status</label>
+                  <select value={form.status} onChange={(e) => updateField('status', e.target.value as PackageInput['status'])}>
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Price</label>
+                  <input
+                    value={form.price}
+                    onChange={(e) => updateField('price', e.target.value)}
+                    placeholder="e.g. From ₱12,500 (leave blank for 'Request a Quote')"
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>No. of Pax</label>
+                  <input
+                    value={form.pax}
+                    onChange={(e) => updateField('pax', e.target.value)}
+                    placeholder="e.g. 2–4 pax or Min 15 pax for groups"
+                  />
+                </div>
+              </div>
+
+              <div className={styles.field}>
+                <label>Summary</label>
+                <textarea value={form.summary} onChange={(e) => updateField('summary', e.target.value)} />
+              </div>
+
+              <div className={styles.section}>
+                <div className={styles.sectionTitle}>Itinerary</div>
+                {form.itinerary.map((day, index) => (
+                  <div key={index} className={styles.listItem}>
+                    <div className={styles.itineraryItem}>
+                      <input
+                        value={day.label}
+                        onChange={(e) => updateItinerary(index, 'label', e.target.value)}
+                        placeholder="Day 1"
+                      />
+                      <textarea
+                        value={day.description}
+                        onChange={(e) => updateItinerary(index, 'description', e.target.value)}
+                        placeholder="What happens this day"
+                      />
+                    </div>
+                    <button type="button" className={styles.removeButton} onClick={() => removeItineraryDay(index)}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button type="button" className={styles.addButton} onClick={addItineraryDay}>
+                  + Add day
                 </button>
               </div>
-            ))}
-            <button type="button" className={styles.addButton} onClick={addItineraryDay}>
-              + Add day
-            </button>
-          </div>
 
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Inclusions</div>
-            {form.inclusions.map((item, index) => (
-              <div key={index} className={styles.listItem}>
-                <input value={item} onChange={(e) => updateListItem('inclusions', index, e.target.value)} />
-                <button
-                  type="button"
-                  className={styles.removeButton}
-                  onClick={() => removeListItem('inclusions', index)}
-                >
-                  Remove
+              <div className={styles.section}>
+                <div className={styles.sectionTitle}>Inclusions</div>
+                {form.inclusions.map((item, index) => (
+                  <div key={index} className={styles.listItem}>
+                    <input value={item} onChange={(e) => updateListItem('inclusions', index, e.target.value)} />
+                    <button
+                      type="button"
+                      className={styles.removeButton}
+                      onClick={() => removeListItem('inclusions', index)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button type="button" className={styles.addButton} onClick={() => addListItem('inclusions')}>
+                  + Add inclusion
                 </button>
               </div>
-            ))}
-            <button type="button" className={styles.addButton} onClick={() => addListItem('inclusions')}>
-              + Add inclusion
-            </button>
-          </div>
 
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Exclusions</div>
-            {form.exclusions.map((item, index) => (
-              <div key={index} className={styles.listItem}>
-                <input value={item} onChange={(e) => updateListItem('exclusions', index, e.target.value)} />
-                <button
-                  type="button"
-                  className={styles.removeButton}
-                  onClick={() => removeListItem('exclusions', index)}
-                >
-                  Remove
+              <div className={styles.section}>
+                <div className={styles.sectionTitle}>Exclusions</div>
+                {form.exclusions.map((item, index) => (
+                  <div key={index} className={styles.listItem}>
+                    <input value={item} onChange={(e) => updateListItem('exclusions', index, e.target.value)} />
+                    <button
+                      type="button"
+                      className={styles.removeButton}
+                      onClick={() => removeListItem('exclusions', index)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button type="button" className={styles.addButton} onClick={() => addListItem('exclusions')}>
+                  + Add exclusion
                 </button>
               </div>
-            ))}
-            <button type="button" className={styles.addButton} onClick={() => addListItem('exclusions')}>
-              + Add exclusion
-            </button>
-          </div>
 
-          <div className={styles.field}>
-            <label>Terms &amp; Conditions / Notes</label>
-            <textarea
-              value={form.termsAndConditions}
-              onChange={(e) => updateField('termsAndConditions', e.target.value)}
+              <div className={styles.field}>
+                <label>Terms &amp; Conditions / Notes</label>
+                <textarea
+                  value={form.termsAndConditions}
+                  onChange={(e) => updateField('termsAndConditions', e.target.value)}
+                />
+              </div>
+
+              <div className={styles.section}>
+                <div className={styles.sectionTitle}>Images</div>
+                <p className={styles.hint}>
+                  Paste hosted image URLs for now — direct file upload isn't wired up yet.
+                </p>
+                <div className={styles.field}>
+                  <label>Main image (destination photo)</label>
+                  <input value={form.mainImage} onChange={(e) => updateField('mainImage', e.target.value)} />
+                </div>
+                <div className={styles.field}>
+                  <label>Poster (promo graphic)</label>
+                  <input value={form.poster} onChange={(e) => updateField('poster', e.target.value)} />
+                </div>
+              </div>
+
+            </>
+          )}
+
+          {tab === 'quotation' && (
+            <QuotationInclusionsEditor
+              value={form.quotationInclusions}
+              onChange={(next) => updateField('quotationInclusions', next)}
             />
-          </div>
-
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Images</div>
-            <p className={styles.hint}>
-              Paste hosted image URLs for now — direct file upload isn't wired up yet.
-            </p>
-            <div className={styles.field}>
-              <label>Main image (destination photo)</label>
-              <input value={form.mainImage} onChange={(e) => updateField('mainImage', e.target.value)} />
-            </div>
-            <div className={styles.field}>
-              <label>Poster (promo graphic)</label>
-              <input value={form.poster} onChange={(e) => updateField('poster', e.target.value)} />
-            </div>
-          </div>
+          )}
 
           {error && <p className={styles.error}>{error}</p>}
 
