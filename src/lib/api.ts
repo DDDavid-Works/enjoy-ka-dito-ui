@@ -63,6 +63,7 @@ export const inquiriesApi = {
   create: (data: InquiryInput) =>
     request<Inquiry>('/inquiries', { method: 'POST', body: JSON.stringify(data) }),
   list: () => request<Inquiry[]>('/inquiries'),
+  get: (id: string) => request<Inquiry>(`/inquiries/${id}`),
   updateStatus: (id: string, status: Inquiry['status']) =>
     request<Inquiry>(`/inquiries/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) }),
 }

@@ -174,6 +174,12 @@ export default function InquiriesList() {
               </div>
 
               {inquiry.message && <p className={styles.message}>{inquiry.message}</p>}
+
+              <div className={styles.cardActions}>
+                <Link className={styles.quoteButton} to={`/admin/quotations/new?inquiry=${inquiry.id}`}>
+                  Create Quotation
+                </Link>
+              </div>
             </div>
           ))}
         </div>

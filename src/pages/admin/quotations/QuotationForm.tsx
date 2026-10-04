@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { hotelsApi, packagesApi, quotationsApi } from '../../../lib/api'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { hotelsApi, inquiriesApi, packagesApi, quotationsApi } from '../../../lib/api'
 import {
   cleanAccommodations,
   cleanExclusions,
   cleanInclusions,
   cleanOptionalTours,
 } from '../../../lib/quotationSections'
-import { moveParentPricesIntoChildren } from '../../../lib/quotationTotals'
+import { buildQuotationFromInquiry, sectionsFromPackage } from '../../../lib/quotationPrefill'
 import type { Hotel } from '../../../types/hotel'
 import type { Package } from '../../../types/package'
 import type { Quotation, QuotationInput } from '../../../types/quotation'
@@ -39,6 +39,9 @@ export default function QuotationForm() {
   const { id } = useParams()
   const isEditing = Boolean(id)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  // Set when arriving from an inquiry's "Create Quotation" button.
+  const inquiryId = isEditing ? null : searchParams.get('inquiry')
 
   // New quotations default to today's date; it can be changed or cleared.
   const [form, setForm] = useState<QuotationInput>(() => ({ ...EMPTY, quoteDate: isEditing ? null : todayIso() }))
@@ -50,6 +53,7 @@ export default function QuotationForm() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [prefilledFrom, setPrefilledFrom] = useState<string | null>(null)
   // The last title this form generated from a package. While the title still equals it, the
   // title is "automatic" and follows the selected package; once you type your own, it stays.
   const autoTitle = useRef('')
@@ -73,6 +77,31 @@ export default function QuotationForm() {
       cancelled = true
     }
   }, [isEditing])
+
+  // Start from an inquiry: fill the form with what it tells us, but save nothing.
+  useEffect(() => {
+    if (!inquiryId) return
+    let cancelled = false
+
+    async function prefill(inquiryId: string) {
+      const inquiry = await inquiriesApi.get(inquiryId)
+      const pkg = inquiry.package ? await packagesApi.get(inquiry.package.slug).catch(() => null) : null
+      if (cancelled) return
+
+      const prefill = buildQuotationFromInquiry(inquiry, pkg)
+      autoTitle.current = prefill.title
+      setForm((prev) => ({ ...prev, ...prefill }))
+      setPrefilledFrom(inquiry.name)
+    }
+
+    prefill(inquiryId).catch((err) => {
+      if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load the inquiry.')
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [inquiryId])
 
   useEffect(() => {
     if (!id) return
@@ -119,10 +148,7 @@ export default function QuotationForm() {
       ...prev,
       packageId: pkg.id,
       title: titleIsAutomatic ? generatedTitle : prev.title,
-      inclusions: moveParentPricesIntoChildren(structuredClone(pkg.quotationInclusions ?? [])),
-      accommodations: structuredClone(pkg.quotationAccommodations ?? []),
-      exclusions: [...(pkg.quotationExclusions ?? [])],
-      optionalTours: structuredClone(pkg.quotationOptionalTours ?? []),
+      ...sectionsFromPackage(pkg),
     }))
   }
 
@@ -183,6 +209,12 @@ export default function QuotationForm() {
           {isEditing ? 'Edit Quotation' : 'New Quotation'}
         </h1>
         {isEditing && <p className={styles.packageName}>{savedTitle}</p>}
+
+        {prefilledFrom && (
+          <p className={styles.hint}>
+            Prefilled from the inquiry by {prefilledFrom}. Nothing is saved until you click Create Quotation.
+          </p>
+        )}
 
         <form className={styles.form} onSubmit={handleSubmit} onChange={() => setSuccess(null)}>
           <div className={styles.field}>
