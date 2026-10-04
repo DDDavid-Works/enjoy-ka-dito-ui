@@ -1,0 +1,41 @@
+.page {
+  min-height: 100svh;
+  background: var(--color-bg);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: var(--color-white);
+  border-bottom: 1px solid rgba(30, 58, 114, 0.1);
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.content {
+  padding: 48px 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.backLink:hover {
+  color: var(--color-primary);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-primary);
+}

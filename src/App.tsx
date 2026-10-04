@@ -17,6 +17,7 @@ import PackageForm from './pages/admin/packages/PackageForm'
 import InquiriesList from './pages/admin/inquiries/InquiriesList'
 import HotelsList from './pages/admin/hotels/HotelsList'
 import HotelForm from './pages/admin/hotels/HotelForm'
+import QuotationsList from './pages/admin/quotations/QuotationsList'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -80,6 +81,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <HotelsList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/quotations"
+        element={
+          <ProtectedRoute>
+            <QuotationsList />
           </ProtectedRoute>
         }
       />

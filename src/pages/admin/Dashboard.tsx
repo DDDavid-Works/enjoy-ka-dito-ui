@@ -40,6 +40,10 @@ export default function AdminDashboard() {
             <span className={styles.moduleTitle}>Hotels & Resorts</span>
             <span className={styles.moduleDesc}>Manage partner hotel and resort contacts.</span>
           </Link>
+          <Link to="/admin/quotations" className={styles.moduleCard}>
+            <span className={styles.moduleTitle}>Quotations</span>
+            <span className={styles.moduleDesc}>Prepare and track customer quotations.</span>
+          </Link>
         </div>
       </main>
     </div>
