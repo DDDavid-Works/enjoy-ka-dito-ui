@@ -75,7 +75,7 @@ export default function HotelForm() {
 
       <main className={styles.content}>
         <Link to="/admin/hotels" className={styles.backLink}>
-          ← Back to hotels
+          ← Back to Hotels
         </Link>
 
         <h1 className={styles.title}>{isEditing ? 'Edit Hotel' : 'New Hotel'}</h1>

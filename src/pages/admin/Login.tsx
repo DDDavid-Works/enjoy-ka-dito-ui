@@ -63,7 +63,7 @@ export default function AdminLogin() {
         {error && <p className={styles.notice}>{error}</p>}
 
         <Link to="/" className={styles.backLink}>
-          ← Back to site
+          ← Back to Site
         </Link>
       </div>
     </main>

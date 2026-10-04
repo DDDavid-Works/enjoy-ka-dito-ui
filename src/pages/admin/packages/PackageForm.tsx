@@ -178,7 +178,7 @@ export default function PackageForm() {
 
       <main className={styles.content}>
         <Link to="/admin/packages" className={styles.backLink}>
-          ← Back to packages
+          ← Back to Packages
         </Link>
 
         <h1 className={isEditing ? `${styles.title} ${styles.titleWithName}` : styles.title}>

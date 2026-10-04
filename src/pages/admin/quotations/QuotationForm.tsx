@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { hotelsApi, packagesApi, quotationsApi } from '../../../lib/api'
 import {
@@ -7,6 +7,7 @@ import {
   cleanInclusions,
   cleanOptionalTours,
 } from '../../../lib/quotationSections'
+import { moveParentPricesIntoChildren } from '../../../lib/quotationTotals'
 import type { Hotel } from '../../../types/hotel'
 import type { Package } from '../../../types/package'
 import type { Quotation, QuotationInput } from '../../../types/quotation'
@@ -16,8 +17,18 @@ import QuotationInclusionsEditor from '../packages/QuotationInclusionsEditor'
 import QuotationOptionalToursEditor from '../packages/QuotationOptionalToursEditor'
 import styles from '../packages/PackageForm.module.css'
 
+// Today as YYYY-MM-DD in the user's local time zone (what a date input expects).
+function todayIso() {
+  const now = new Date()
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
+
 const EMPTY: QuotationInput = {
   title: '',
+  customerName: '',
+  quoteDate: null,
+  remarks: '',
   inclusions: [],
   accommodations: [],
   exclusions: [],
@@ -29,7 +40,8 @@ export default function QuotationForm() {
   const isEditing = Boolean(id)
   const navigate = useNavigate()
 
-  const [form, setForm] = useState<QuotationInput>(EMPTY)
+  // New quotations default to today's date; it can be changed or cleared.
+  const [form, setForm] = useState<QuotationInput>(() => ({ ...EMPTY, quoteDate: isEditing ? null : todayIso() }))
   const [savedTitle, setSavedTitle] = useState('')
   const [basedOn, setBasedOn] = useState<Quotation['package']>(null)
   const [packages, setPackages] = useState<Package[]>([])
@@ -38,6 +50,9 @@ export default function QuotationForm() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  // The last title this form generated from a package. While the title still equals it, the
+  // title is "automatic" and follows the selected package; once you type your own, it stays.
+  const autoTitle = useRef('')
 
   useEffect(() => {
     let cancelled = false
@@ -69,6 +84,9 @@ export default function QuotationForm() {
         setBasedOn(quotation.package ?? null)
         setForm({
           title: quotation.title,
+          customerName: quotation.customerName ?? '',
+          quoteDate: quotation.quoteDate ?? null,
+          remarks: quotation.remarks ?? '',
           inclusions: quotation.inclusions,
           accommodations: quotation.accommodations,
           exclusions: quotation.exclusions,
@@ -86,16 +104,22 @@ export default function QuotationForm() {
   // Copy a package's quotation details into this quotation (replaces what's below).
   function startFromPackage(packageId: string) {
     const pkg = packages.find((p) => p.id === packageId)
+    const titleIsAutomatic = !form.title.trim() || form.title === autoTitle.current
+
     if (!pkg) {
-      setForm((prev) => ({ ...prev, packageId: undefined }))
+      if (titleIsAutomatic) autoTitle.current = ''
+      setForm((prev) => ({ ...prev, packageId: undefined, title: titleIsAutomatic ? '' : prev.title }))
       return
     }
+
+    const generatedTitle = `${pkg.title} Quotation`
+    if (titleIsAutomatic) autoTitle.current = generatedTitle
 
     setForm((prev) => ({
       ...prev,
       packageId: pkg.id,
-      title: prev.title.trim() ? prev.title : `${pkg.title} Quotation`,
-      inclusions: structuredClone(pkg.quotationInclusions ?? []),
+      title: titleIsAutomatic ? generatedTitle : prev.title,
+      inclusions: moveParentPricesIntoChildren(structuredClone(pkg.quotationInclusions ?? [])),
       accommodations: structuredClone(pkg.quotationAccommodations ?? []),
       exclusions: [...(pkg.quotationExclusions ?? [])],
       optionalTours: structuredClone(pkg.quotationOptionalTours ?? []),
@@ -116,7 +140,9 @@ export default function QuotationForm() {
     const payload: QuotationInput = {
       ...form,
       title: form.title.trim(),
-      inclusions: cleanInclusions(form.inclusions),
+      customerName: form.customerName.trim(),
+      remarks: form.remarks.trim(),
+      inclusions: cleanInclusions(form.inclusions, { dropParentPrices: true }),
       accommodations: cleanAccommodations(form.accommodations),
       exclusions: cleanExclusions(form.exclusions),
       optionalTours: cleanOptionalTours(form.optionalTours),
@@ -124,9 +150,9 @@ export default function QuotationForm() {
 
     try {
       if (isEditing && id) {
-        await quotationsApi.update(id, payload)
-        // Stay on the page: sync the cleaned values and confirm the save.
-        setForm(payload)
+        const saved = await quotationsApi.update(id, payload)
+        // Stay on the page: sync the cleaned values (the name comes back proper-cased) and confirm the save.
+        setForm({ ...payload, customerName: saved.customerName })
         setSavedTitle(payload.title)
         setSuccess('Quotation saved successfully.')
       } else {
@@ -150,7 +176,7 @@ export default function QuotationForm() {
 
       <main className={styles.content}>
         <Link to="/admin/quotations" className={styles.backLink}>
-          ← Back to quotations
+          ← Back to Quotations
         </Link>
 
         <h1 className={isEditing ? `${styles.title} ${styles.titleWithName}` : styles.title}>
@@ -166,6 +192,34 @@ export default function QuotationForm() {
               onChange={(e) => updateField('title', e.target.value)}
               placeholder="e.g. El Nido Island Escape — Santos Family"
               required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label>Prepared For</label>
+            <input
+              value={form.customerName}
+              onChange={(e) => updateField('customerName', e.target.value)}
+              placeholder="Who is this quotation for?"
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label>Quote Date</label>
+            <input
+              type="date"
+              value={form.quoteDate ?? ''}
+              onChange={(e) => updateField('quoteDate', e.target.value || null)}
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label>Remarks</label>
+            <textarea
+              value={form.remarks}
+              onChange={(e) => updateField('remarks', e.target.value)}
+              placeholder="Notes about this quotation"
+              rows={4}
             />
           </div>
 
@@ -193,7 +247,11 @@ export default function QuotationForm() {
             </p>
           )}
 
-          <QuotationInclusionsEditor value={form.inclusions} onChange={(next) => updateField('inclusions', next)} />
+          <QuotationInclusionsEditor
+            showTotals
+            value={form.inclusions}
+            onChange={(next) => updateField('inclusions', next)}
+          />
           <QuotationAccommodationsEditor
             value={form.accommodations}
             hotels={hotels}

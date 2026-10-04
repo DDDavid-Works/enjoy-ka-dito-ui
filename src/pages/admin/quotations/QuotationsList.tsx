@@ -4,6 +4,12 @@ import { quotationsApi } from '../../../lib/api'
 import type { Quotation } from '../../../types/quotation'
 import styles from '../packages/PackagesList.module.css'
 
+// "2026-10-04" -> the viewer's local date format, without a time zone shift.
+function formatQuoteDate(isoDate: string) {
+  const [year, month, day] = isoDate.split('-').map(Number)
+  return new Date(year, month - 1, day).toLocaleDateString()
+}
+
 export default function QuotationsList() {
   const [quotations, setQuotations] = useState<Quotation[]>([])
   const [loading, setLoading] = useState(true)
@@ -49,7 +55,7 @@ export default function QuotationsList() {
 
       <main className={styles.content}>
         <Link to="/admin" className={styles.backLink}>
-          ← Back to dashboard
+          ← Back to Dashboard
         </Link>
 
         <div className={styles.header}>
@@ -70,6 +76,8 @@ export default function QuotationsList() {
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Prepared For</th>
+                <th>Quote Date</th>
                 <th>Based on package</th>
                 <th>Updated</th>
                 <th></th>
@@ -79,6 +87,8 @@ export default function QuotationsList() {
               {quotations.map((quotation) => (
                 <tr key={quotation.id}>
                   <td>{quotation.title}</td>
+                  <td>{quotation.customerName || '—'}</td>
+                  <td>{quotation.quoteDate ? formatQuoteDate(quotation.quoteDate) : '—'}</td>
                   <td>{quotation.package?.title ?? '—'}</td>
                   <td>{new Date(quotation.updatedAt).toLocaleDateString()}</td>
                   <td>

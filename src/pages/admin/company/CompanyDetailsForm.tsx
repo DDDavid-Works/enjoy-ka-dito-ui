@@ -72,7 +72,7 @@ export default function CompanyDetailsForm() {
 
       <main className={styles.content}>
         <Link to="/admin" className={styles.backLink}>
-          ← Back to dashboard
+          ← Back to Dashboard
         </Link>
 
         <h1 className={styles.title}>Company Details</h1>

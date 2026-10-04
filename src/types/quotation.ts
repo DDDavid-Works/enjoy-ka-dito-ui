@@ -3,6 +3,9 @@ import type { QuotationAccommodation, QuotationInclusion, QuotationOptionalTour 
 export type Quotation = {
   id: string
   title: string
+  customerName: string
+  quoteDate: string | null
+  remarks: string
   package?: { id: string; title: string } | null
   inclusions: QuotationInclusion[]
   accommodations: QuotationAccommodation[]

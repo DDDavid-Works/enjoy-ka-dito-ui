@@ -1,6 +1,7 @@
 import type { Hotel } from '../../../types/hotel'
 import type { QuotationAccommodation } from '../../../types/package'
 import HotelCombobox from './HotelCombobox'
+import PriceField from './PriceField'
 import styles from './PackageForm.module.css'
 
 type Props = {
@@ -74,14 +75,7 @@ function AccommodationRow({ item, hotel, hotels, onChange, onRemove }: RowProps)
 
         <div className={styles.field}>
           <label>Rate per head (optional)</label>
-          <input
-            type="number"
-            min={0}
-            step="0.01"
-            value={item.ratePerHead ?? ''}
-            onChange={(e) => onChange({ ratePerHead: e.target.value === '' ? undefined : Number(e.target.value) })}
-            placeholder="0.00"
-          />
+          <PriceField value={item.ratePerHead} onChange={(ratePerHead) => onChange({ ratePerHead })} />
         </div>
       </div>
 

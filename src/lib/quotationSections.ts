@@ -3,21 +3,33 @@ import type { QuotationAccommodation, QuotationInclusion, QuotationOptionalTour 
 // Tidy the quotation sections before saving: trim text and drop blank rows.
 // Shared by the package form's Quotation tab and the Quotations module.
 
-export function cleanInclusions(items: QuotationInclusion[]): QuotationInclusion[] {
+// With dropParentPrices (Quotations), a row that has children keeps no price of its own,
+// because its Total is calculated from those children.
+export function cleanInclusions(
+  items: QuotationInclusion[],
+  options: { dropParentPrices?: boolean } = {},
+): QuotationInclusion[] {
+  const { dropParentPrices } = options
   return items
-    .map((item) => ({
-      text: item.text.trim(),
-      price: item.price,
-      details: item.details
-        .map((d) => ({
-          text: d.text.trim(),
-          price: d.price,
-          details: d.details
+    .map((item) => {
+      const details = item.details
+        .map((d) => {
+          const subDetails = d.details
             .map((sub) => ({ text: sub.text.trim(), price: sub.price }))
-            .filter((sub) => sub.text || sub.price !== undefined),
-        }))
-        .filter((d) => d.text || d.price !== undefined || d.details.length),
-    }))
+            .filter((sub) => sub.text || sub.price !== undefined)
+          return {
+            text: d.text.trim(),
+            price: dropParentPrices && subDetails.length ? undefined : d.price,
+            details: subDetails,
+          }
+        })
+        .filter((d) => d.text || d.price !== undefined || d.details.length)
+      return {
+        text: item.text.trim(),
+        price: dropParentPrices && details.length ? undefined : item.price,
+        details,
+      }
+    })
     .filter((item) => item.text || item.price !== undefined || item.details.length)
 }
 

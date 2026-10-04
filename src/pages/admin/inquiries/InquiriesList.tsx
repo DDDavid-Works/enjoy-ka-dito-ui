@@ -67,7 +67,7 @@ export default function InquiriesList() {
 
       <main className={styles.content}>
         <Link to="/admin" className={styles.backLink}>
-          ← Back to dashboard
+          ← Back to Dashboard
         </Link>
 
         <div className={styles.header}>

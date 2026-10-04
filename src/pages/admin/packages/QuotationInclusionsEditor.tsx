@@ -1,4 +1,6 @@
+import { detailTotal, formatPeso, inclusionTotal } from '../../../lib/quotationTotals'
 import type { QuotationDetail, QuotationInclusion, QuotationSubDetail } from '../../../types/package'
+import PriceField from './PriceField'
 import styles from './PackageForm.module.css'
 
 type Props = {
@@ -6,6 +8,8 @@ type Props = {
   onChange: (next: QuotationInclusion[]) => void
   // Drop the top divider when this is the first thing under the tab bar.
   flush?: boolean
+  // Quotations: rows with children show a calculated Total instead of an editable price.
+  showTotals?: boolean
 }
 
 function replaceAt<T>(list: T[], index: number, item: T) {
@@ -23,20 +27,26 @@ type PriceInputProps = {
 
 function PriceInput({ value, onChange }: PriceInputProps) {
   return (
-    <input
-      type="number"
-      min={0}
-      step="0.01"
+    <PriceField
       className={styles.priceInput}
-      aria-label="Price (optional)"
+      ariaLabel="Price (optional)"
       placeholder="Price"
-      value={value ?? ''}
-      onChange={(e) => onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+      value={value}
+      onChange={onChange}
     />
   )
 }
 
-export default function QuotationInclusionsEditor({ value, onChange, flush }: Props) {
+function TotalLabel({ value }: { value?: number }) {
+  return (
+    <div className={styles.totalLabel} title="Total of the rows below">
+      <span className={styles.totalTag}>Total</span>
+      <span>{value === undefined ? '—' : formatPeso(value)}</span>
+    </div>
+  )
+}
+
+export default function QuotationInclusionsEditor({ value, onChange, flush, showTotals }: Props) {
   function updateInclusion(index: number, patch: Partial<QuotationInclusion>) {
     onChange(replaceAt(value, index, { ...value[index], ...patch }))
   }
@@ -51,11 +61,39 @@ export default function QuotationInclusionsEditor({ value, onChange, flush }: Pr
     updateDetail(index, detailIndex, { details: replaceAt(subDetails, subIndex, { ...subDetails[subIndex], ...patch }) })
   }
 
+  // With totals on, a priced row that gets its first child hands its price to that child,
+  // so the money still counts once the row becomes a total.
+  function addDetail(index: number) {
+    const item = value[index]
+    if (showTotals && !item.details.length && item.price !== undefined) {
+      updateInclusion(index, {
+        price: undefined,
+        details: [{ text: item.text, price: item.price, details: [] }, { text: '', details: [] }],
+      })
+      return
+    }
+    updateInclusion(index, { details: [...item.details, { text: '', details: [] }] })
+  }
+
+  function addSubDetail(index: number, detailIndex: number) {
+    const detail = value[index].details[detailIndex]
+    if (showTotals && !detail.details.length && detail.price !== undefined) {
+      updateDetail(index, detailIndex, {
+        price: undefined,
+        details: [{ text: detail.text, price: detail.price }, { text: '' }],
+      })
+      return
+    }
+    updateDetail(index, detailIndex, { details: [...detail.details, { text: '' }] })
+  }
+
   return (
     <div className={flush ? `${styles.section} ${styles.sectionFlush}` : styles.section}>
       <div className={styles.sectionTitle}>Package Inclusions</div>
       <p className={styles.hint}>
-        Internal only — used for quotations, not shown on the website. Every level can have an optional price.
+        {showTotals
+          ? 'Prices are per head. A row with details shows a Total (the sum of what is under it) instead of a price.'
+          : 'Internal only — used for quotations, not shown on the website. Every level can have an optional price.'}
       </p>
 
       {value.map((item, index) => (
@@ -66,7 +104,11 @@ export default function QuotationInclusionsEditor({ value, onChange, flush }: Pr
               onChange={(e) => updateInclusion(index, { text: e.target.value })}
               placeholder="e.g. Roundtrip Airfare via Clark"
             />
-            <PriceInput value={item.price} onChange={(price) => updateInclusion(index, { price })} />
+            {showTotals && item.details.length ? (
+              <TotalLabel value={inclusionTotal(item)} />
+            ) : (
+              <PriceInput value={item.price} onChange={(price) => updateInclusion(index, { price })} />
+            )}
             <button type="button" className={styles.removeButton} onClick={() => onChange(removeAt(value, index))}>
               Remove
             </button>
@@ -81,7 +123,11 @@ export default function QuotationInclusionsEditor({ value, onChange, flush }: Pr
                     onChange={(e) => updateDetail(index, detailIndex, { text: e.target.value })}
                     placeholder="Detail"
                   />
-                  <PriceInput value={detail.price} onChange={(price) => updateDetail(index, detailIndex, { price })} />
+                  {showTotals && detail.details.length ? (
+                    <TotalLabel value={detailTotal(detail)} />
+                  ) : (
+                    <PriceInput value={detail.price} onChange={(price) => updateDetail(index, detailIndex, { price })} />
+                  )}
                   <button
                     type="button"
                     className={styles.removeButton}
@@ -112,21 +158,13 @@ export default function QuotationInclusionsEditor({ value, onChange, flush }: Pr
                       </button>
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    className={styles.addButton}
-                    onClick={() => updateDetail(index, detailIndex, { details: [...detail.details, { text: '' }] })}
-                  >
+                  <button type="button" className={styles.addButton} onClick={() => addSubDetail(index, detailIndex)}>
                     + Add sub-detail
                   </button>
                 </div>
               </div>
             ))}
-            <button
-              type="button"
-              className={styles.addButton}
-              onClick={() => updateInclusion(index, { details: [...item.details, { text: '', details: [] }] })}
-            >
+            <button type="button" className={styles.addButton} onClick={() => addDetail(index)}>
               + Add detail
             </button>
           </div>
