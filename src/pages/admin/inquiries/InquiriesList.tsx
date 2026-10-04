@@ -1,16 +1,23 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { inquiriesApi } from '../../../lib/api'
-import type { Inquiry, InquiryStatus } from '../../../types/inquiry'
+import type { Inquiry, InquiryStatus, InquiryType } from '../../../types/inquiry'
 import styles from './InquiriesList.module.css'
 
 const STATUS_FILTERS: Array<InquiryStatus | 'all'> = ['all', 'new', 'contacted', 'closed']
+const TYPE_FILTERS: Array<{ value: InquiryType | 'all'; label: string }> = [
+  { value: 'all', label: 'All Types' },
+  { value: 'quote', label: 'Quote Requests' },
+  { value: 'general', label: 'General Questions' },
+]
+const TYPE_LABELS: Record<InquiryType, string> = { quote: 'Quote request', general: 'General question' }
 
 export default function InquiriesList() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<InquiryStatus | 'all'>('all')
+  const [typeFilter, setTypeFilter] = useState<InquiryType | 'all'>('all')
 
   useEffect(() => {
     let cancelled = false
@@ -45,8 +52,11 @@ export default function InquiriesList() {
   }
 
   const filteredInquiries = useMemo(
-    () => (filter === 'all' ? inquiries : inquiries.filter((i) => i.status === filter)),
-    [inquiries, filter],
+    () =>
+      inquiries.filter(
+        (i) => (filter === 'all' || i.status === filter) && (typeFilter === 'all' || i.type === typeFilter),
+      ),
+    [inquiries, filter, typeFilter],
   )
 
   return (
@@ -77,6 +87,21 @@ export default function InquiriesList() {
           ))}
         </div>
 
+        <div className={styles.filters}>
+          {TYPE_FILTERS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={
+                option.value === typeFilter ? `${styles.filterPill} ${styles.filterPillActive}` : styles.filterPill
+              }
+              onClick={() => setTypeFilter(option.value)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
         {error && <p className={styles.error}>{error}</p>}
 
         {!loading && filteredInquiries.length === 0 && !error && (
@@ -95,6 +120,7 @@ export default function InquiriesList() {
                   </p>
                   <p className={styles.meta}>
                     {new Date(inquiry.createdAt).toLocaleString()}
+                    {` · ${TYPE_LABELS[inquiry.type]}`}
                     {inquiry.travelerType ? ` · ${inquiry.travelerType}` : ''}
                     {inquiry.groupType ? ` · ${inquiry.groupType} traveler(s)` : ''}
                   </p>

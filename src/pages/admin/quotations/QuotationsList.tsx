@@ -1,7 +1,46 @@
-import { Link } from 'react-router-dom'
-import styles from './QuotationsList.module.css'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { quotationsApi } from '../../../lib/api'
+import type { Quotation } from '../../../types/quotation'
+import styles from '../packages/PackagesList.module.css'
 
 export default function QuotationsList() {
+  const [quotations, setQuotations] = useState<Quotation[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    let cancelled = false
+
+    quotationsApi
+      .list()
+      .then((data) => {
+        if (!cancelled) setQuotations(data)
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load quotations.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  async function handleDelete(quotation: Quotation) {
+    if (!confirm(`Delete "${quotation.title}"? This can't be undone.`)) return
+
+    try {
+      await quotationsApi.remove(quotation.id)
+      setQuotations((prev) => prev.filter((q) => q.id !== quotation.id))
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete quotation.')
+    }
+  }
+
   return (
     <div className={styles.page}>
       <header className={styles.topbar}>
@@ -13,7 +52,50 @@ export default function QuotationsList() {
           ← Back to dashboard
         </Link>
 
-        <h1 className={styles.title}>Quotations</h1>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Quotations</h1>
+          <button type="button" className={styles.newButton} onClick={() => navigate('/admin/quotations/new')}>
+            + New Quotation
+          </button>
+        </div>
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        {!loading && quotations.length === 0 && !error && (
+          <p className={styles.empty}>No quotations yet. Create your first one.</p>
+        )}
+
+        {quotations.length > 0 && (
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Based on package</th>
+                <th>Updated</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {quotations.map((quotation) => (
+                <tr key={quotation.id}>
+                  <td>{quotation.title}</td>
+                  <td>{quotation.package?.title ?? '—'}</td>
+                  <td>{new Date(quotation.updatedAt).toLocaleDateString()}</td>
+                  <td>
+                    <div className={styles.actions}>
+                      <button type="button" onClick={() => navigate(`/admin/quotations/${quotation.id}/edit`)}>
+                        Edit
+                      </button>
+                      <button type="button" className={styles.delete} onClick={() => handleDelete(quotation)}>
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </main>
     </div>
   )

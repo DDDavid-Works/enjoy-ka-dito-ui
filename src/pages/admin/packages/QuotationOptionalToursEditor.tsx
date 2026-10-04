@@ -27,7 +27,7 @@ export default function QuotationOptionalToursEditor({ value, onChange }: Props)
       </p>
 
       {value.map((tour, index) => (
-        <div key={index} className={styles.quoteItem}>
+        <div key={index} className={`${styles.quoteItem} ${styles.quoteCard}`}>
           <div className={styles.listItem}>
             <input
               value={tour.text}

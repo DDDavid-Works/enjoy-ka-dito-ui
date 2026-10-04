@@ -1,6 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { hotelsApi, packagesApi } from '../../../lib/api'
+import {
+  cleanAccommodations,
+  cleanExclusions,
+  cleanInclusions,
+  cleanOptionalTours,
+} from '../../../lib/quotationSections'
 import type { Hotel } from '../../../types/hotel'
 import { PACKAGE_CATEGORIES, type ItineraryDay, type PackageInput } from '../../../types/package'
 import QuotationAccommodationsEditor from './QuotationAccommodationsEditor'
@@ -138,21 +144,10 @@ export default function PackageForm() {
       inclusions: form.inclusions.map((s) => s.trim()).filter(Boolean),
       exclusions: form.exclusions.map((s) => s.trim()).filter(Boolean),
       itinerary: form.itinerary.filter((day) => day.label.trim() || day.description.trim()),
-      quotationAccommodations: form.quotationAccommodations
-        .filter((a) => a.hotelId)
-        .map((a) => ({ ...a, remarks: a.remarks?.trim() || undefined })),
-      quotationExclusions: form.quotationExclusions.map((e) => e.trim()).filter(Boolean),
-      quotationOptionalTours: form.quotationOptionalTours
-        .map((tour) => ({ text: tour.text.trim(), details: tour.details.map((d) => d.trim()).filter(Boolean) }))
-        .filter((tour) => tour.text || tour.details.length),
-      quotationInclusions: form.quotationInclusions
-        .map((item) => ({
-          text: item.text.trim(),
-          details: item.details
-            .map((d) => ({ text: d.text.trim(), details: d.details.map((sub) => sub.trim()).filter(Boolean) }))
-            .filter((d) => d.text || d.details.length),
-        }))
-        .filter((item) => item.text || item.details.length),
+      quotationInclusions: cleanInclusions(form.quotationInclusions),
+      quotationAccommodations: cleanAccommodations(form.quotationAccommodations),
+      quotationExclusions: cleanExclusions(form.quotationExclusions),
+      quotationOptionalTours: cleanOptionalTours(form.quotationOptionalTours),
     }
 
     try {
@@ -282,7 +277,7 @@ export default function PackageForm() {
               <div className={styles.section}>
                 <div className={styles.sectionTitle}>Itinerary</div>
                 {form.itinerary.map((day, index) => (
-                  <div key={index} className={styles.listItem}>
+                  <div key={index} className={`${styles.listItem} ${styles.quoteCard}`}>
                     <div className={styles.itineraryItem}>
                       <input
                         value={day.label}
@@ -372,6 +367,7 @@ export default function PackageForm() {
           {tab === 'quotation' && (
             <>
               <QuotationInclusionsEditor
+                flush
                 value={form.quotationInclusions}
                 onChange={(next) => updateField('quotationInclusions', next)}
               />

@@ -1,6 +1,8 @@
 import type { Package, PackageInput } from '../types/package'
 import type { Inquiry, InquiryInput } from '../types/inquiry'
 import type { Hotel, HotelInput } from '../types/hotel'
+import type { Quotation, QuotationInput } from '../types/quotation'
+import type { CompanyDetails } from '../types/company'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
 const STORAGE_KEY = 'ekd-admin-auth'
@@ -63,4 +65,19 @@ export const inquiriesApi = {
   list: () => request<Inquiry[]>('/inquiries'),
   updateStatus: (id: string, status: Inquiry['status']) =>
     request<Inquiry>(`/inquiries/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+}
+
+export const quotationsApi = {
+  list: () => request<Quotation[]>('/quotations'),
+  get: (id: string) => request<Quotation>(`/quotations/${id}`),
+  create: (data: QuotationInput) => request<Quotation>('/quotations', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: Partial<QuotationInput>) =>
+    request<Quotation>(`/quotations/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  remove: (id: string) => request<void>(`/quotations/${id}`, { method: 'DELETE' }),
+}
+
+export const companyApi = {
+  get: () => request<CompanyDetails>('/company-details'),
+  update: (data: Partial<CompanyDetails>) =>
+    request<CompanyDetails>('/company-details', { method: 'PATCH', body: JSON.stringify(data) }),
 }

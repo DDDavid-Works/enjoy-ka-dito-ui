@@ -18,6 +18,8 @@ import InquiriesList from './pages/admin/inquiries/InquiriesList'
 import HotelsList from './pages/admin/hotels/HotelsList'
 import HotelForm from './pages/admin/hotels/HotelForm'
 import QuotationsList from './pages/admin/quotations/QuotationsList'
+import QuotationForm from './pages/admin/quotations/QuotationForm'
+import CompanyDetailsForm from './pages/admin/company/CompanyDetailsForm'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -85,10 +87,34 @@ export default function App() {
         }
       />
       <Route
+        path="/admin/company"
+        element={
+          <ProtectedRoute>
+            <CompanyDetailsForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/quotations"
         element={
           <ProtectedRoute>
             <QuotationsList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/quotations/new"
+        element={
+          <ProtectedRoute>
+            <QuotationForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/quotations/:id/edit"
+        element={
+          <ProtectedRoute>
+            <QuotationForm />
           </ProtectedRoute>
         }
       />

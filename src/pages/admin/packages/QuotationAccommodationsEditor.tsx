@@ -53,7 +53,7 @@ type RowProps = {
 
 function AccommodationRow({ item, hotel, hotels, onChange, onRemove }: RowProps) {
   return (
-    <div className={styles.quoteItem}>
+    <div className={`${styles.quoteItem} ${styles.quoteCard}`}>
       <div className={styles.accommodationGrid}>
         <div className={styles.field}>
           <label>Hotel</label>

@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { inquiriesApi } from '../lib/api'
+import { useCompanyDetails } from '../lib/useCompanyDetails'
 import styles from './ContactUs.module.css'
 
 export default function ContactUs() {
+  const company = useCompanyDetails()
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -18,6 +20,7 @@ export default function ContactUs() {
 
     try {
       await inquiriesApi.create({
+        type: 'general',
         name: String(data.get('name') ?? ''),
         email: String(data.get('email') ?? ''),
         message: String(data.get('message') ?? ''),
@@ -48,8 +51,13 @@ export default function ContactUs() {
       <section className={styles.formSection}>
         <div className={styles.infoCard}>
           <h2 className={styles.infoTitle}>Contact details</h2>
-          <p className={styles.infoLine}>hello@enjoykadito.com</p>
-          <p className={styles.infoLine}>+63 900 000 0000</p>
+          {company.email && <p className={styles.infoLine}>{company.email}</p>}
+          {company.contactNumbers.map((number) => (
+            <p key={number} className={styles.infoLine}>
+              {number}
+            </p>
+          ))}
+          {company.address && <p className={styles.infoLine}>{company.address}</p>}
           <p className={styles.infoNote}>We typically reply within 1&ndash;2 business days.</p>
         </div>
 

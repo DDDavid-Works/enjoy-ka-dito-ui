@@ -1,4 +1,5 @@
 export type InquiryStatus = 'new' | 'contacted' | 'closed'
+export type InquiryType = 'quote' | 'general'
 export type TravelerType = 'Corporate Group' | 'Family' | 'Senior Group' | 'Solo Foreigner'
 
 export const TRAVELER_TYPES: TravelerType[] = ['Corporate Group', 'Family', 'Senior Group', 'Solo Foreigner']
@@ -30,6 +31,7 @@ export type Inquiry = {
   tripDuration?: string
   message?: string
   package?: { id: string; title: string; slug: string } | null
+  type: InquiryType
   status: InquiryStatus
   createdAt: string
 }
@@ -53,4 +55,5 @@ export type InquiryInput = {
   tripDuration?: string
   message?: string
   packageId?: string
+  type?: InquiryType
 }

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import DestinationCombobox from '../components/DestinationCombobox'
 import { inquiriesApi } from '../lib/api'
+import { toTelHref, useCompanyDetails } from '../lib/useCompanyDetails'
 import styles from './FamilySeniorTours.module.css'
 
 const PILLARS = [
@@ -46,6 +47,7 @@ const DESTINATIONS = [
 ]
 
 export default function FamilySeniorTours() {
+  const company = useCompanyDetails()
   const [searchParams] = useSearchParams()
   const prefilledDestination = searchParams.get('destination') ?? ''
 
@@ -91,9 +93,11 @@ export default function FamilySeniorTours() {
           rush, worry, or walk further than they&rsquo;re comfortable with.
         </p>
         <div className={styles.heroActions}>
-          <a href="tel:+639000000000" className={styles.heroCta}>
-            Call Our Family Travel Experts
-          </a>
+          {company.contactNumbers[0] && (
+            <a href={toTelHref(company.contactNumbers[0])} className={styles.heroCta}>
+              Call Our Family Travel Experts
+            </a>
+          )}
           <a href="#family-inquiry-form" className={styles.heroCtaOutline}>
             Send us your trip details
           </a>

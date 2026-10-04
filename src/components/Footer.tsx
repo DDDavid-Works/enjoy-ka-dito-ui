@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useCompanyDetails } from '../lib/useCompanyDetails'
 import { FacebookIcon, InstagramIcon, TiktokIcon } from './SocialIcons'
 import styles from './Footer.module.css'
 
@@ -14,6 +15,9 @@ const SOCIAL_LINKS = [
 ]
 
 export default function Footer() {
+  const company = useCompanyDetails()
+  const contactLine = [company.email, ...company.contactNumbers].filter(Boolean).join(' · ')
+
   return (
     <footer className={styles.footer}>
       <div className={styles.footerMain}>
@@ -25,7 +29,8 @@ export default function Footer() {
           <p className={styles.tagline}>
             Your Philippine-based travel partner for more meaningful local and international adventures.
           </p>
-          <p className={styles.contact}>hello@enjoykadito.com · +63 900 000 0000</p>
+          {contactLine && <p className={styles.contact}>{contactLine}</p>}
+          {company.address && <p className={styles.contact}>{company.address}</p>}
         </div>
 
         <div className={styles.social}>
