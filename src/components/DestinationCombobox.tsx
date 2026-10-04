@@ -6,10 +6,11 @@ type Props = {
   name: string
   placeholder?: string
   defaultValue?: string
+  required?: boolean
 }
 
 // Text input that suggests current tour titles but accepts any free value.
-export default function DestinationCombobox({ name, placeholder, defaultValue = '' }: Props) {
+export default function DestinationCombobox({ name, placeholder, defaultValue = '', required }: Props) {
   const [value, setValue] = useState(defaultValue)
   const [options, setOptions] = useState<string[]>([])
   const [open, setOpen] = useState(false)
@@ -70,6 +71,7 @@ export default function DestinationCombobox({ name, placeholder, defaultValue = 
         name={name}
         value={value}
         placeholder={placeholder}
+        required={required}
         autoComplete="off"
         role="combobox"
         aria-expanded={showList}

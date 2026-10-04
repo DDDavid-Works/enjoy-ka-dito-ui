@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import DestinationCombobox from '../components/DestinationCombobox'
 import { inquiriesApi } from '../lib/api'
 import { CORPORATE_BUDGET_BRACKETS } from '../types/inquiry'
 import styles from './CorporateTeamBuilding.module.css'
@@ -47,7 +48,6 @@ const DESTINATIONS = [
   },
 ]
 
-const DESTINATION_OPTIONS = ['Boracay', 'Cebu', 'Hong Kong', 'Vietnam', 'Custom']
 
 export default function CorporateTeamBuilding() {
   const [submitted, setSubmitted] = useState(false)
@@ -178,16 +178,11 @@ export default function CorporateTeamBuilding() {
 
                 <div className={styles.fieldRow}>
                   <div className={styles.field}>
-                    <select name="destination" defaultValue="" required>
-                      <option value="" disabled>
-                        Preferred destination
-                      </option>
-                      {DESTINATION_OPTIONS.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
+                    <DestinationCombobox
+                      name="destination"
+                      placeholder="Preferred destination/Tour Package"
+                      required
+                    />
                   </div>
                   <div className={styles.field}>
                     <select name="budgetBracket" defaultValue="" required>

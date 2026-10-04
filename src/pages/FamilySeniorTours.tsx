@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import DestinationCombobox from '../components/DestinationCombobox'
 import { inquiriesApi } from '../lib/api'
 import styles from './FamilySeniorTours.module.css'
 
@@ -170,10 +171,9 @@ export default function FamilySeniorTours() {
                 </div>
 
                 <div className={styles.field}>
-                  <input
-                    type="text"
+                  <DestinationCombobox
                     name="destination"
-                    placeholder="Preferred destination"
+                    placeholder="Preferred destination/Tour Package"
                     defaultValue={prefilledDestination}
                   />
                 </div>
