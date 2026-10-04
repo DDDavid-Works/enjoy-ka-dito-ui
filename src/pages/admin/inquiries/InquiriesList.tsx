@@ -13,20 +13,24 @@ export default function InquiriesList() {
   const [filter, setFilter] = useState<InquiryStatus | 'all'>('all')
 
   useEffect(() => {
-    load()
-  }, [])
+    let cancelled = false
 
-  async function load() {
-    setLoading(true)
-    setError(null)
-    try {
-      setInquiries(await inquiriesApi.list())
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load inquiries.')
-    } finally {
-      setLoading(false)
+    inquiriesApi
+      .list()
+      .then((data) => {
+        if (!cancelled) setInquiries(data)
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load inquiries.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
     }
-  }
+  }, [])
 
   async function handleStatusChange(inquiry: Inquiry, status: InquiryStatus) {
     const previous = inquiries

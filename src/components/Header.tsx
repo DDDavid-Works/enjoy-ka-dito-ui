@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import styles from './Header.module.css'
 
@@ -11,12 +11,10 @@ const NAV_LINKS = [
 ]
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
-
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [location.pathname])
+  // Menu is open only for the path it was opened on, so navigating closes it.
+  const [openPath, setOpenPath] = useState<string | null>(null)
+  const menuOpen = openPath === location.pathname
 
   return (
     <header className={styles.header}>
@@ -47,7 +45,7 @@ export default function Header() {
       <button
         type="button"
         className={styles.menuToggle}
-        onClick={() => setMenuOpen((prev) => !prev)}
+        onClick={() => setOpenPath(menuOpen ? null : location.pathname)}
         aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         aria-expanded={menuOpen}
       >

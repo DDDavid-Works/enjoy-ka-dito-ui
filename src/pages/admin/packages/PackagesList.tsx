@@ -11,20 +11,24 @@ export default function PackagesList() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    load()
-  }, [])
+    let cancelled = false
 
-  async function load() {
-    setLoading(true)
-    setError(null)
-    try {
-      setPackages(await packagesApi.list())
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load packages.')
-    } finally {
-      setLoading(false)
+    packagesApi
+      .list()
+      .then((data) => {
+        if (!cancelled) setPackages(data)
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load packages.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
     }
-  }
+  }, [])
 
   async function handleDelete(pkg: Package) {
     if (!confirm(`Delete "${pkg.title}"? This can't be undone.`)) return

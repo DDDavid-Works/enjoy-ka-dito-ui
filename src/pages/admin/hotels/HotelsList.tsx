@@ -15,20 +15,24 @@ export default function HotelsList() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    load()
-  }, [])
+    let cancelled = false
 
-  async function load() {
-    setLoading(true)
-    setError(null)
-    try {
-      setHotels(await hotelsApi.list())
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load hotels.')
-    } finally {
-      setLoading(false)
+    hotelsApi
+      .list()
+      .then((data) => {
+        if (!cancelled) setHotels(data)
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load hotels.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
     }
-  }
+  }, [])
 
   async function handleDelete(hotel: Hotel) {
     if (!confirm(`Delete "${hotel.name}"? This can't be undone.`)) return

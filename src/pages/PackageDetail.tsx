@@ -6,27 +6,31 @@ import styles from './PackageDetail.module.css'
 
 export default function PackageDetail() {
   const { slug } = useParams<{ slug: string }>()
-  const [pkg, setPkg] = useState<Package | null>(null)
-  const [notFound, setNotFound] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [result, setResult] = useState<{ slug: string; pkg: Package | null } | null>(null)
   const [activePhoto, setActivePhoto] = useState(0)
 
   useEffect(() => {
     if (!slug) return
 
-    setLoading(true)
+    let cancelled = false
     packagesApi
       .get(slug)
-      .then(setPkg)
-      .catch(() => setNotFound(true))
-      .finally(() => setLoading(false))
+      .then((pkg) => !cancelled && setResult({ slug, pkg }))
+      .catch(() => !cancelled && setResult({ slug, pkg: null }))
+
+    return () => {
+      cancelled = true
+    }
   }, [slug])
 
-  if (notFound) {
+  // A result for a different slug means the current one is still loading.
+  const current = result?.slug === slug ? result : null
+  if (current && !current.pkg) {
     return <Navigate to="/tour-packages" replace />
   }
 
-  if (loading || !pkg) {
+  const pkg = current?.pkg
+  if (!pkg) {
     return null
   }
 
