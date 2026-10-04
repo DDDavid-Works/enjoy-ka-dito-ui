@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import DestinationCombobox from '../components/DestinationCombobox'
 import { inquiriesApi } from '../lib/api'
 import { TRAVELER_TYPES } from '../types/inquiry'
 import styles from './RequestQuote.module.css'
@@ -99,10 +100,9 @@ export default function RequestQuote() {
                 </div>
 
                 <div className={styles.field}>
-                  <input
-                    type="text"
+                  <DestinationCombobox
                     name="destination"
-                    placeholder="Preferred destination"
+                    placeholder="Preferred destination/Tour Package"
                     defaultValue={prefilledDestination}
                   />
                 </div>
