@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { usersApi } from '../../../lib/api'
 import { useAuth } from '../../../context/auth'
 import type { User } from '../../../types/user'
+import { MODULES } from '../../../types/modules'
 import styles from '../hotels/HotelsList.module.css'
 
 export default function UsersList() {
@@ -68,16 +69,18 @@ export default function UsersList() {
         {users.length > 0 && (
           <table className={styles.table}>
             <colgroup>
-              <col style={{ width: '28%' }} />
-              <col style={{ width: '30%' }} />
               <col style={{ width: '22%' }} />
-              <col style={{ width: '20%' }} />
+              <col style={{ width: '26%' }} />
+              <col style={{ width: '18%' }} />
+              <col style={{ width: '18%' }} />
+              <col style={{ width: '16%' }} />
             </colgroup>
             <thead>
               <tr>
                 <th>Full Name</th>
                 <th>Email</th>
                 <th>Contact Number</th>
+                <th>Access</th>
                 <th></th>
               </tr>
             </thead>
@@ -90,6 +93,9 @@ export default function UsersList() {
                   </td>
                   <td>{user.email}</td>
                   <td>{user.contactNumber || '—'}</td>
+                  <td>
+                    {user.modules.length === MODULES.length ? 'All modules' : `${user.modules.length} of ${MODULES.length} modules`}
+                  </td>
                   <td>
                     <div className={styles.actions}>
                       <button type="button" onClick={() => navigate(`/admin/users/${user.id}/edit`)}>

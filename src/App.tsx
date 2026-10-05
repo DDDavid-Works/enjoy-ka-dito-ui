@@ -52,7 +52,7 @@ export default function App() {
       <Route
         path="/admin/packages"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="packages">
             <PackagesList />
           </ProtectedRoute>
         }
@@ -60,7 +60,7 @@ export default function App() {
       <Route
         path="/admin/packages/new"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="packages">
             <PackageForm />
           </ProtectedRoute>
         }
@@ -68,7 +68,7 @@ export default function App() {
       <Route
         path="/admin/packages/:id/edit"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="packages">
             <PackageForm />
           </ProtectedRoute>
         }
@@ -76,7 +76,7 @@ export default function App() {
       <Route
         path="/admin/inquiries"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="inquiries">
             <InquiriesList />
           </ProtectedRoute>
         }
@@ -84,7 +84,7 @@ export default function App() {
       <Route
         path="/admin/hotels"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="hotels">
             <HotelsList />
           </ProtectedRoute>
         }
@@ -92,7 +92,7 @@ export default function App() {
       <Route
         path="/admin/company"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="company">
             <CompanyDetailsForm />
           </ProtectedRoute>
         }
@@ -100,7 +100,7 @@ export default function App() {
       <Route
         path="/admin/quotations"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="quotations">
             <QuotationsList />
           </ProtectedRoute>
         }
@@ -108,7 +108,7 @@ export default function App() {
       <Route
         path="/admin/quotations/new"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="quotations">
             <QuotationForm />
           </ProtectedRoute>
         }
@@ -116,7 +116,7 @@ export default function App() {
       <Route
         path="/admin/quotations/:id/print"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="quotations">
             <QuotationPrint />
           </ProtectedRoute>
         }
@@ -124,7 +124,7 @@ export default function App() {
       <Route
         path="/admin/quotations/:id/edit"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="quotations">
             <QuotationForm />
           </ProtectedRoute>
         }
@@ -132,7 +132,7 @@ export default function App() {
       <Route
         path="/admin/hotels/new"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="hotels">
             <HotelForm />
           </ProtectedRoute>
         }
@@ -140,7 +140,7 @@ export default function App() {
       <Route
         path="/admin/hotels/:id/edit"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="hotels">
             <HotelForm />
           </ProtectedRoute>
         }
@@ -148,7 +148,7 @@ export default function App() {
       <Route
         path="/admin/users"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="users">
             <UsersList />
           </ProtectedRoute>
         }
@@ -156,7 +156,7 @@ export default function App() {
       <Route
         path="/admin/users/new"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="users">
             <UserForm />
           </ProtectedRoute>
         }
@@ -164,7 +164,7 @@ export default function App() {
       <Route
         path="/admin/users/:id/edit"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute module="users">
             <UserForm />
           </ProtectedRoute>
         }

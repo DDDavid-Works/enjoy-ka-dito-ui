@@ -1,27 +1,31 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/auth'
+import type { ModuleKey } from '../../types/modules'
 import styles from './Dashboard.module.css'
 
-const MODULE_GROUPS = [
+type DashboardModule = { module: ModuleKey; to: string; title: string; desc: string }
+
+const MODULE_GROUPS: { title: string; modules: DashboardModule[] }[] = [
   {
     title: 'Sales',
     modules: [
-      { to: '/admin/inquiries', title: 'Inquiries', desc: 'Review quote requests and contact messages.' },
-      { to: '/admin/quotations', title: 'Quotations', desc: 'Prepare and track customer quotations.' },
+      { module: 'inquiries', to: '/admin/inquiries', title: 'Inquiries', desc: 'Review quote requests and contact messages.' },
+      { module: 'quotations', to: '/admin/quotations', title: 'Quotations', desc: 'Prepare and track customer quotations.' },
     ],
   },
   {
     title: 'Catalog',
     modules: [
-      { to: '/admin/packages', title: 'Tour Packages', desc: 'Create, edit, and publish tour packages.' },
-      { to: '/admin/hotels', title: 'Hotels & Resorts', desc: 'Manage partner hotel and resort contacts.' },
+      { module: 'packages', to: '/admin/packages', title: 'Tour Packages', desc: 'Create, edit, and publish tour packages.' },
+      { module: 'hotels', to: '/admin/hotels', title: 'Hotels & Resorts', desc: 'Manage partner hotel and resort contacts.' },
     ],
   },
   {
     title: 'Settings',
     modules: [
-      { to: '/admin/users', title: 'Users', desc: 'Manage who can log in, and change passwords.' },
+      { module: 'users', to: '/admin/users', title: 'Users', desc: 'Manage who can log in, and change passwords.' },
       {
+        module: 'company',
         to: '/admin/company',
         title: 'Company Details',
         desc: 'Update the email, address, and contact numbers shown on the site.',
@@ -33,6 +37,11 @@ const MODULE_GROUPS = [
 export default function AdminDashboard() {
   const { admin, logout } = useAuth()
   const navigate = useNavigate()
+
+  const visibleGroups = MODULE_GROUPS.map((group) => ({
+    ...group,
+    modules: group.modules.filter((m) => admin?.modules?.includes(m.module)),
+  })).filter((group) => group.modules.length > 0)
 
   function handleLogout() {
     logout()
@@ -55,7 +64,7 @@ export default function AdminDashboard() {
         <h1 className={styles.title}>Welcome, {admin?.name}.</h1>
         <p className={styles.subtext}>Manage the site's content below.</p>
 
-        {MODULE_GROUPS.map((group) => (
+        {visibleGroups.map((group) => (
           <section key={group.title} className={styles.group}>
             <h2 className={styles.groupTitle}>{group.title}</h2>
             <div className={styles.modules}>

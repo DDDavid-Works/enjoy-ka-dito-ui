@@ -1,10 +1,12 @@
 import { createContext, useContext } from 'react'
+import type { ModuleKey } from '../types/modules'
 
 export type Admin = {
   id: string
   email: string
   name: string
   role: string
+  modules: ModuleKey[]
 }
 
 export type AuthContextValue = {

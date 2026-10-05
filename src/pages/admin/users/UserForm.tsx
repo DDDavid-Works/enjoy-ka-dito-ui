@@ -3,9 +3,10 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { usersApi } from '../../../lib/api'
 import { useAuth } from '../../../context/auth'
 import { MIN_PASSWORD_LENGTH, type UserInput } from '../../../types/user'
+import { MODULES, type ModuleKey } from '../../../types/modules'
 import styles from '../hotels/HotelForm.module.css'
 
-const EMPTY: UserInput = { name: '', email: '', contactNumber: '' }
+const EMPTY: UserInput = { name: '', email: '', contactNumber: '', modules: [] }
 
 export default function UserForm() {
   const { id } = useParams()
@@ -35,13 +36,22 @@ export default function UserForm() {
 
     usersApi
       .get(id)
-      .then((user) => setForm({ name: user.name, email: user.email, contactNumber: user.contactNumber ?? '' }))
+      .then((user) =>
+        setForm({ name: user.name, email: user.email, contactNumber: user.contactNumber ?? '', modules: user.modules }),
+      )
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load user.'))
       .finally(() => setLoading(false))
   }, [id, isEditing])
 
   function updateField<K extends keyof UserInput>(key: K, value: UserInput[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
+  }
+
+  function toggleModule(key: ModuleKey, checked: boolean) {
+    setForm((prev) => ({
+      ...prev,
+      modules: checked ? [...prev.modules, key] : prev.modules.filter((m) => m !== key),
+    }))
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -65,6 +75,7 @@ export default function UserForm() {
       name: form.name.trim(),
       email: form.email.trim(),
       contactNumber: form.contactNumber.trim(),
+      modules: form.modules,
     }
 
     try {
@@ -155,6 +166,27 @@ export default function UserForm() {
                 placeholder="e.g. +63 900 000 0000"
               />
             </div>
+          </div>
+
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>Module access</div>
+            <p className={styles.hint}>Tick the modules this user can open. Unticked modules are hidden and blocked.</p>
+            {MODULES.map((m) => {
+              // Own Users access can't be removed, or you'd lock yourself out.
+              const lockedOn = isSelf && m.key === 'users'
+              return (
+                <label key={m.key} style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '8px 0' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.modules.includes(m.key)}
+                    disabled={lockedOn}
+                    onChange={(e) => toggleModule(m.key, e.target.checked)}
+                  />
+                  {m.label}
+                  {lockedOn && <span className={styles.hint}>(required for your own account)</span>}
+                </label>
+              )
+            })}
           </div>
 
           {!isEditing && (
