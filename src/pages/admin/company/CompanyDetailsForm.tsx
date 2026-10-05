@@ -67,7 +67,7 @@ export default function CompanyDetailsForm() {
   return (
     <div className={styles.page}>
       <header className={styles.topbar}>
-        <img src="/images/logo.png" alt="Enjoy Ka Dito" className={styles.logo} />
+        <img src="/images/logo-square.png" alt="Enjoy Ka Dito" className={styles.logo} />
       </header>
 
       <main className={styles.content}>

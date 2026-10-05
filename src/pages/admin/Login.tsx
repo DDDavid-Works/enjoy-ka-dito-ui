@@ -30,7 +30,7 @@ export default function AdminLogin() {
     <main className={styles.page}>
       <div className={styles.card}>
         <Link to="/" className={styles.logo}>
-          <img src="/images/logo.png" alt="Enjoy Ka Dito" />
+          <img src="/images/logo-square.png" alt="Enjoy Ka Dito" />
         </Link>
 
         <h1 className={styles.title}>Admin Login</h1>

@@ -51,7 +51,7 @@ export default function AdminDashboard() {
   return (
     <div className={styles.page}>
       <header className={styles.topbar}>
-        <img src="/images/logo.png" alt="Enjoy Ka Dito" className={styles.logo} />
+        <img src="/images/logo-square.png" alt="Enjoy Ka Dito" className={styles.logo} />
         <div className={styles.account}>
           <span>{admin?.name}</span>
           <Link to="/admin/account" className={styles.accountLink}>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import styles from './Header.module.css'
 
@@ -15,11 +15,20 @@ export default function Header() {
   // Menu is open only for the path it was opened on, so navigating closes it.
   const [openPath, setOpenPath] = useState<string | null>(null)
   const menuOpen = openPath === location.pathname
+  // The logo badge hangs below the bar at the top of the page and tucks into it once scrolled.
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <NavLink to="/" className={styles.logo}>
-        <img src="/images/logo.png" alt="Enjoy Ka Dito" />
+        <img src="/images/logo-square.png" alt="Enjoy Ka Dito" />
         <span className={styles.logoCompany}>by: MCP Greenery Travel and Tours</span>
       </NavLink>
 

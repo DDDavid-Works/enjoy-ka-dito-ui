@@ -23,7 +23,7 @@ export default function Footer() {
       <div className={styles.footerMain}>
         <div className={styles.footerInfo}>
           <div className={styles.logoCard}>
-            <img src="/images/logo.png" alt="Enjoy Ka Dito" className={styles.logo} />
+            <img src="/images/logo-square.png" alt="Enjoy Ka Dito" className={styles.logo} />
           </div>
           <p className={styles.company}>by: MCP Greenery Travel and Tours</p>
           <p className={styles.tagline}>

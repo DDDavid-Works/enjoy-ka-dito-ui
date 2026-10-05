@@ -86,7 +86,7 @@ export default function QuotationPrint() {
 
       <article className={styles.sheet}>
         <header className={styles.header}>
-          <img src="/images/logo.png" alt="Enjoy Ka Dito" className={styles.logo} />
+          <img src="/images/logo-square.png" alt="Enjoy Ka Dito" className={styles.logo} />
           <div className={styles.company}>
             {company.email && <p>{company.email}</p>}
             {company.contactNumbers.map((number) => (
