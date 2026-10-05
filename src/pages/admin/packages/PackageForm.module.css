@@ -344,3 +344,7 @@
   letter-spacing: 0.04em;
   color: rgba(31, 41, 51, 0.55);
 }
+
+.notesField {
+  margin-top: 16px;
+}

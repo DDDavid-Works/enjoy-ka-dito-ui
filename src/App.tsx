@@ -19,6 +19,7 @@ import HotelsList from './pages/admin/hotels/HotelsList'
 import HotelForm from './pages/admin/hotels/HotelForm'
 import QuotationsList from './pages/admin/quotations/QuotationsList'
 import QuotationForm from './pages/admin/quotations/QuotationForm'
+import QuotationPrint from './pages/admin/quotations/QuotationPrint'
 import CompanyDetailsForm from './pages/admin/company/CompanyDetailsForm'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -107,6 +108,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <QuotationForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/quotations/:id/print"
+        element={
+          <ProtectedRoute>
+            <QuotationPrint />
           </ProtectedRoute>
         }
       />

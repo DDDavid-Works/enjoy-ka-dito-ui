@@ -6,6 +6,9 @@ import styles from './PackageForm.module.css'
 type Props = {
   value: QuotationInclusion[]
   onChange: (next: QuotationInclusion[]) => void
+  // Free-text notes shown under the inclusions.
+  notes: string
+  onNotesChange: (next: string) => void
   // Drop the top divider when this is the first thing under the tab bar.
   flush?: boolean
   // Quotations: rows with children show a calculated Total instead of an editable price.
@@ -46,7 +49,7 @@ function TotalLabel({ value }: { value?: number }) {
   )
 }
 
-export default function QuotationInclusionsEditor({ value, onChange, flush, showTotals }: Props) {
+export default function QuotationInclusionsEditor({ value, onChange, notes, onNotesChange, flush, showTotals }: Props) {
   function updateInclusion(index: number, patch: Partial<QuotationInclusion>) {
     onChange(replaceAt(value, index, { ...value[index], ...patch }))
   }
@@ -174,6 +177,16 @@ export default function QuotationInclusionsEditor({ value, onChange, flush, show
       <button type="button" className={styles.addButton} onClick={() => onChange([...value, { text: '', details: [] }])}>
         + Add inclusion
       </button>
+
+      <div className={`${styles.field} ${styles.notesField}`}>
+        <label>Notes</label>
+        <textarea
+          value={notes}
+          onChange={(e) => onNotesChange(e.target.value)}
+          placeholder="e.g. Tour note: complimentary pick-up is available for hotels in Corong-Corong and the town proper."
+          rows={4}
+        />
+      </div>
     </div>
   )
 }

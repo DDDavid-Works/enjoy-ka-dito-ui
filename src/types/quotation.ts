@@ -9,6 +9,7 @@ export type Quotation = {
   package?: { id: string; title: string } | null
   inquiry?: { id: string; name: string } | null
   inclusions: QuotationInclusion[]
+  inclusionNotes: string
   accommodations: QuotationAccommodation[]
   exclusions: string[]
   optionalTours: QuotationOptionalTour[]

@@ -31,6 +31,7 @@ const EMPTY: PackageInput = {
   quotationAccommodations: [],
   quotationExclusions: [],
   quotationOptionalTours: [],
+  quotationInclusionNotes: '',
   mainImage: '',
   poster: '',
   gallery: [],
@@ -71,6 +72,7 @@ export default function PackageForm() {
           pax: rest.pax ?? '',
           summary: rest.summary ?? '',
           termsAndConditions: rest.termsAndConditions ?? '',
+          quotationInclusionNotes: rest.quotationInclusionNotes ?? '',
           mainImage: rest.mainImage ?? '',
           poster: rest.poster ?? '',
         })
@@ -148,6 +150,7 @@ export default function PackageForm() {
       quotationAccommodations: cleanAccommodations(form.quotationAccommodations),
       quotationExclusions: cleanExclusions(form.quotationExclusions),
       quotationOptionalTours: cleanOptionalTours(form.quotationOptionalTours),
+      quotationInclusionNotes: form.quotationInclusionNotes.trim(),
     }
 
     try {
@@ -370,6 +373,8 @@ export default function PackageForm() {
                 flush
                 value={form.quotationInclusions}
                 onChange={(next) => updateField('quotationInclusions', next)}
+                notes={form.quotationInclusionNotes}
+                onNotesChange={(next) => updateField('quotationInclusionNotes', next)}
               />
               <QuotationAccommodationsEditor
                 value={form.quotationAccommodations}

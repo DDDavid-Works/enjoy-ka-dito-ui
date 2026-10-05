@@ -30,6 +30,7 @@ const EMPTY: QuotationInput = {
   quoteDate: null,
   remarks: '',
   inclusions: [],
+  inclusionNotes: '',
   accommodations: [],
   exclusions: [],
   optionalTours: [],
@@ -119,6 +120,7 @@ export default function QuotationForm() {
           quoteDate: quotation.quoteDate ?? null,
           remarks: quotation.remarks ?? '',
           inclusions: quotation.inclusions,
+          inclusionNotes: quotation.inclusionNotes ?? '',
           accommodations: quotation.accommodations,
           exclusions: quotation.exclusions,
           optionalTours: quotation.optionalTours,
@@ -171,6 +173,7 @@ export default function QuotationForm() {
       customerName: form.customerName.trim(),
       remarks: form.remarks.trim(),
       inclusions: cleanInclusions(form.inclusions, { dropParentPrices: true }),
+      inclusionNotes: form.inclusionNotes.trim(),
       accommodations: cleanAccommodations(form.accommodations),
       exclusions: cleanExclusions(form.exclusions),
       optionalTours: cleanOptionalTours(form.optionalTours),
@@ -291,6 +294,8 @@ export default function QuotationForm() {
             showTotals
             value={form.inclusions}
             onChange={(next) => updateField('inclusions', next)}
+            notes={form.inclusionNotes}
+            onNotesChange={(next) => updateField('inclusionNotes', next)}
           />
           <QuotationAccommodationsEditor
             value={form.accommodations}
@@ -317,6 +322,16 @@ export default function QuotationForm() {
             <button type="button" className={styles.cancel} onClick={() => navigate('/admin/quotations')}>
               Cancel
             </button>
+            {isEditing && id && (
+              <button
+                type="button"
+                className={styles.cancel}
+                title="Exports the saved version of this quotation"
+                onClick={() => window.open(`/admin/quotations/${id}/print`, '_blank')}
+              >
+                Export PDF
+              </button>
+            )}
           </div>
         </form>
       </main>

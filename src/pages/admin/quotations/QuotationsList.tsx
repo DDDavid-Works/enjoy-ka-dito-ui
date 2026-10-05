@@ -96,6 +96,13 @@ export default function QuotationsList() {
                       <button type="button" onClick={() => navigate(`/admin/quotations/${quotation.id}/edit`)}>
                         Edit
                       </button>
+                      <button
+                        type="button"
+                        title="Export a PDF of this quotation"
+                        onClick={() => window.open(`/admin/quotations/${quotation.id}/print`, '_blank')}
+                      >
+                        PDF
+                      </button>
                       <button type="button" className={styles.delete} onClick={() => handleDelete(quotation)}>
                         Delete
                       </button>

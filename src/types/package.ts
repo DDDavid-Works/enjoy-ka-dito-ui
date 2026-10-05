@@ -51,6 +51,7 @@ export type Package = {
   termsAndConditions?: string
   quotationInclusions: QuotationInclusion[]
   quotationAccommodations: QuotationAccommodation[]
+  quotationInclusionNotes: string
   quotationExclusions: string[]
   quotationOptionalTours: QuotationOptionalTour[]
   mainImage?: string

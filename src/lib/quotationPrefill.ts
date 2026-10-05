@@ -3,12 +3,13 @@ import type { Package } from '../types/package'
 import type { QuotationInput } from '../types/quotation'
 import { moveParentPricesIntoChildren } from './quotationTotals'
 
-type Sections = Pick<QuotationInput, 'inclusions' | 'accommodations' | 'exclusions' | 'optionalTours'>
+type Sections = Pick<QuotationInput, 'inclusions' | 'inclusionNotes' | 'accommodations' | 'exclusions' | 'optionalTours'>
 
 // A package's quotation details as an independent copy for a new quotation.
 export function sectionsFromPackage(pkg: Package): Sections {
   return {
     inclusions: moveParentPricesIntoChildren(structuredClone(pkg.quotationInclusions ?? [])),
+    inclusionNotes: pkg.quotationInclusionNotes ?? '',
     accommodations: structuredClone(pkg.quotationAccommodations ?? []),
     exclusions: [...(pkg.quotationExclusions ?? [])],
     optionalTours: structuredClone(pkg.quotationOptionalTours ?? []),
