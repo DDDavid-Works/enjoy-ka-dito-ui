@@ -54,6 +54,9 @@ export default function AdminDashboard() {
         <img src="/images/logo.png" alt="Enjoy Ka Dito" className={styles.logo} />
         <div className={styles.account}>
           <span>{admin?.name}</span>
+          <Link to="/admin/account" className={styles.accountLink}>
+            Change Password
+          </Link>
           <button type="button" onClick={handleLogout} className={styles.logoutButton}>
             Log Out
           </button>

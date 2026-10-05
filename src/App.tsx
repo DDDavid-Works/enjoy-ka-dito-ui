@@ -21,6 +21,7 @@ import QuotationsList from './pages/admin/quotations/QuotationsList'
 import QuotationForm from './pages/admin/quotations/QuotationForm'
 import QuotationPrint from './pages/admin/quotations/QuotationPrint'
 import CompanyDetailsForm from './pages/admin/company/CompanyDetailsForm'
+import ChangeMyPassword from './pages/admin/account/ChangeMyPassword'
 import UsersList from './pages/admin/users/UsersList'
 import UserForm from './pages/admin/users/UserForm'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -142,6 +143,14 @@ export default function App() {
         element={
           <ProtectedRoute module="hotels">
             <HotelForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/account"
+        element={
+          <ProtectedRoute>
+            <ChangeMyPassword />
           </ProtectedRoute>
         }
       />

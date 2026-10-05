@@ -101,3 +101,13 @@
   text-transform: uppercase;
   color: rgba(31, 41, 51, 0.55);
 }
+
+.accountLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.accountLink:hover {
+  text-decoration: underline;
+}

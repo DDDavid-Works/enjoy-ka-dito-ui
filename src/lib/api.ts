@@ -78,6 +78,11 @@ export const quotationsApi = {
   remove: (id: string) => request<void>(`/quotations/${id}`, { method: 'DELETE' }),
 }
 
+export const authApi = {
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    request<void>('/auth/password', { method: 'PATCH', body: JSON.stringify(data) }),
+}
+
 export const usersApi = {
   list: () => request<User[]>('/users'),
   get: (id: string) => request<User>(`/users/${id}`),
