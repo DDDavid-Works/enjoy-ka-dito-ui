@@ -20,6 +20,7 @@ const MODULE_GROUPS = [
   {
     title: 'Settings',
     modules: [
+      { to: '/admin/users', title: 'Users', desc: 'Manage who can log in, and change passwords.' },
       {
         to: '/admin/company',
         title: 'Company Details',

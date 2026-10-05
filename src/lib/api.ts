@@ -3,6 +3,7 @@ import type { Inquiry, InquiryInput } from '../types/inquiry'
 import type { Hotel, HotelInput } from '../types/hotel'
 import type { Quotation, QuotationInput } from '../types/quotation'
 import type { CompanyDetails } from '../types/company'
+import type { User, UserInput } from '../types/user'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
 const STORAGE_KEY = 'ekd-admin-auth'
@@ -75,6 +76,18 @@ export const quotationsApi = {
   update: (id: string, data: Partial<QuotationInput>) =>
     request<Quotation>(`/quotations/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   remove: (id: string) => request<void>(`/quotations/${id}`, { method: 'DELETE' }),
+}
+
+export const usersApi = {
+  list: () => request<User[]>('/users'),
+  get: (id: string) => request<User>(`/users/${id}`),
+  create: (data: UserInput & { password: string }) =>
+    request<User>('/users', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: Partial<UserInput>) =>
+    request<User>(`/users/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  changePassword: (id: string, data: { newPassword: string; currentPassword?: string }) =>
+    request<void>(`/users/${id}/password`, { method: 'PATCH', body: JSON.stringify(data) }),
+  remove: (id: string) => request<void>(`/users/${id}`, { method: 'DELETE' }),
 }
 
 export const companyApi = {
