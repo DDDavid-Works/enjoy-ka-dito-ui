@@ -8,9 +8,11 @@ type Props = {
   value: QuotationAccommodation[]
   hotels: Hotel[]
   onChange: (next: QuotationAccommodation[]) => void
+  /** Drop the "Internal only" wording (only the Tour Packages form needs it). */
+  hideInternalNote?: boolean
 }
 
-export default function QuotationAccommodationsEditor({ value, hotels, onChange }: Props) {
+export default function QuotationAccommodationsEditor({ value, hotels, onChange, hideInternalNote }: Props) {
   const hotelsById = new Map(hotels.map((h) => [h.id, h]))
 
   function update(index: number, patch: Partial<QuotationAccommodation>) {
@@ -20,7 +22,9 @@ export default function QuotationAccommodationsEditor({ value, hotels, onChange 
   return (
     <div className={styles.section}>
       <div className={styles.sectionTitle}>Accommodations</div>
-      <p className={styles.hint}>Internal only — pick from your Hotels &amp; Resorts list. Rate per head is optional.</p>
+      <p className={styles.hint}>
+        {hideInternalNote ? 'Pick from' : 'Internal only — pick from'} your Hotels &amp; Resorts list. Rate per head is optional.
+      </p>
 
       {value.map((item, index) => (
         <AccommodationRow

@@ -4,6 +4,8 @@ import styles from './PackageForm.module.css'
 type Props = {
   value: QuotationOptionalTour[]
   onChange: (next: QuotationOptionalTour[]) => void
+  /** Drop the "Internal only" wording (only the Tour Packages form needs it). */
+  hideInternalNote?: boolean
 }
 
 function replaceAt<T>(list: T[], index: number, item: T) {
@@ -14,7 +16,7 @@ function removeAt<T>(list: T[], index: number) {
   return list.filter((_, i) => i !== index)
 }
 
-export default function QuotationOptionalToursEditor({ value, onChange }: Props) {
+export default function QuotationOptionalToursEditor({ value, onChange, hideInternalNote }: Props) {
   function updateTour(index: number, patch: Partial<QuotationOptionalTour>) {
     onChange(replaceAt(value, index, { ...value[index], ...patch }))
   }
@@ -23,7 +25,9 @@ export default function QuotationOptionalToursEditor({ value, onChange }: Props)
     <div className={styles.section}>
       <div className={styles.sectionTitle}>Optional Tours</div>
       <p className={styles.hint}>
-        Internal only — extra tours offered with an additional fee. Not shown on the website.
+        {hideInternalNote
+          ? 'Extra tours offered with an additional fee.'
+          : 'Internal only — extra tours offered with an additional fee. Not shown on the website.'}
       </p>
 
       {value.map((tour, index) => (

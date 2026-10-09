@@ -3,13 +3,17 @@ import styles from './PackageForm.module.css'
 type Props = {
   value: string[]
   onChange: (next: string[]) => void
+  /** Drop the "Internal only" note (only the Tour Packages form needs it). */
+  hideInternalNote?: boolean
 }
 
-export default function QuotationExclusionsEditor({ value, onChange }: Props) {
+export default function QuotationExclusionsEditor({ value, onChange, hideInternalNote }: Props) {
   return (
     <div className={styles.section}>
       <div className={styles.sectionTitle}>Package Exclusions</div>
-      <p className={styles.hint}>Internal only — used for quotations, not shown on the website.</p>
+      {!hideInternalNote && (
+        <p className={styles.hint}>Internal only — used for quotations, not shown on the website.</p>
+      )}
 
       {value.map((item, index) => (
         <div key={index} className={styles.listItem}>

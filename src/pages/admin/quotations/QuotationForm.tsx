@@ -300,10 +300,16 @@ export default function QuotationForm() {
           <QuotationAccommodationsEditor
             value={form.accommodations}
             hotels={hotels}
+            hideInternalNote
             onChange={(next) => updateField('accommodations', next)}
           />
-          <QuotationExclusionsEditor value={form.exclusions} onChange={(next) => updateField('exclusions', next)} />
+          <QuotationExclusionsEditor
+            hideInternalNote
+            value={form.exclusions}
+            onChange={(next) => updateField('exclusions', next)}
+          />
           <QuotationOptionalToursEditor
+            hideInternalNote
             value={form.optionalTours}
             onChange={(next) => updateField('optionalTours', next)}
           />
